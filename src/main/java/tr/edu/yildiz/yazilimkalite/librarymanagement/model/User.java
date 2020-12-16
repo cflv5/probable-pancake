@@ -1,5 +1,6 @@
 package tr.edu.yildiz.yazilimkalite.librarymanagement.model;
 
+import java.sql.Timestamp;
 import java.util.List;
 
 import javax.persistence.Column;
@@ -14,6 +15,10 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
+
+import org.hibernate.annotations.CreationTimestamp;
+
+import tr.edu.yildiz.yazilimkalite.librarymanagement.dto.UserRegistrationDto;
 
 @Entity
 @Table(name = "users")
@@ -42,10 +47,59 @@ public class User {
     @JoinTable(joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
     private List<UserRole> roles;
 
+    @CreationTimestamp
+    private Timestamp creationTime;
+
     public User() {
         super();
     }
 
+	public static User of(UserRegistrationDto userToSave) {
+        return new User()
+                    .email(userToSave.getEmail()).name(userToSave.getName())
+                    .surname(userToSave.getSurname()).status(userToSave.getStatus())
+                    .password(userToSave.getPassword());
+    }
+    public User id(Long id) {
+        this.id = id;
+        return this;
+    }
+
+    public User name(String name) {
+        this.name = name;
+        return this;
+    }
+
+    public User surname(String surname) {
+        this.surname = surname;
+        return this;
+    }
+
+    public User email(String email) {
+        this.email = email;
+        return this;
+    }
+
+    public User password(String password) {
+        this.password = password;
+        return this;
+    }
+
+    public User status(UserStatus status) {
+        this.status = status;
+        return this;
+    }
+
+    public User roles(List<UserRole> roles) {
+        this.roles = roles;
+        return this;
+    }
+
+    public User creationTime(Timestamp creationTime) {
+        this.creationTime = creationTime;
+        return this;
+    }
+    
     public Long getId() {
         return id;
     }
@@ -102,10 +156,19 @@ public class User {
         this.roles = roles;
     }
 
+    
+    public Timestamp getCreationTime() {
+        return creationTime;
+    }
+    
+    public void setCreationTime(Timestamp creationTime) {
+        this.creationTime = creationTime;
+    }
+    
     @Override
     public String toString() {
-        return "User [email=" + email + ", id=" + id + ", name=" + name + ", password=" + password + ", roles=" + roles
-                + ", status=" + status + ", surname=" + surname + "]";
+        return "User [creationTime=" + creationTime + ", email=" + email + ", id=" + id + ", name=" + name
+                + ", password=" + password + ", roles=" + roles + ", status=" + status + ", surname=" + surname + "]";
     }
-
+    
 }
