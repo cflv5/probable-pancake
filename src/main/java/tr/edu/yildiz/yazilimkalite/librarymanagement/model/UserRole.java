@@ -14,12 +14,11 @@ import org.hibernate.annotations.CreationTimestamp;
 public class UserRole {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private Long id;
 
-    @Column
+    @Column(nullable = false, unique = true)
     private String role;
 
-    @Column(nullable = false)
     @CreationTimestamp
     private Timestamp creationTime;
 
@@ -27,11 +26,26 @@ public class UserRole {
         super();
     }
 
-    public long getId() {
+    public UserRole id(long id) {
+        this.id = id;
+        return this;
+    }
+
+    public UserRole role(String role) {
+        this.role = role;
+        return this;
+    }
+
+    public UserRole creationTime(Timestamp creationTime) {
+        this.creationTime = creationTime;
+        return this;
+    }
+
+    public Long getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
