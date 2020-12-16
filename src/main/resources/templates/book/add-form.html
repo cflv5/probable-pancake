@@ -1,0 +1,103 @@
+<div th:fragment="add-form" class="container">
+    <div class="row my-3">
+        <div class="col">
+            <h1 class="h2">
+                Kitap
+                <th:block th:text="${updateForm} ? 'Düzeneleme' : 'Kayıt'"></th:block>
+                Formu
+            </h1>
+        </div>
+    </div>
+    <hr />
+    <div class="row">
+        <div th:if="${hasError}" class="col-sm-12 alert alert-danger">
+            <p class="my-15">Kitap kayıt formu hatalı!</p>
+            <ul class="list-group" th:if="${integrityError}">
+                <li class="list-group-item" th:if="${emailExists}">E-posta adresi zaten kullanılıyor.</li>
+                <li class="list-group-item" th:if="${passwordEmpty}">Kullanıcı şifresi boş olamaz.</li>
+            </ul>
+        </div>
+        <div class="col-sm-12">
+            <form class="needs-validation" th:action="@{/books/add}" method="POST" th:object="${book}">
+                <th:block th:if="${updateForm}">
+                    <div class="form-group">
+                        <input class="form-control" type="text" hidden th:id="id" name="id" readonly
+                            th:value="${book?.id}">
+                    </div>
+                </th:block>
+                <div class="form-group">
+                    <label for="isbn">ISBN</label>
+                    <input id="isbn" type="text" class="form-control" placeholder="ISBN" th:value="${book?.isbn}"
+                        th:field="*{isbn}" required />
+                </div>
+                <div class="form-group">
+                    <label for="name">İsim</label>
+                    <input id="name" type="text" class="form-control" placeholder="Kitap İsmi" th:value="${book?.name}"
+                        th:field="*{name}" required />
+                </div>
+                <div class="form-group">
+                    <label for="publish-date">Yayınlanma Tarihi</label>
+                    <input id="publish-date" type="date" class="form-control" placeholder="Yayınlanma Tarihi"
+                        th:value="${book?.publishDate}" th:field="*{publishDate}" />
+                </div>
+                <div class="form-group">
+                    <label for="pages">Sayfa Sayısı</label>
+                    <input id="pages" type="number" class="form-control" placeholder="Sayfa Sayısı"
+                        th:value="${book?.numberOfPages}" th:field="*{numberOfPages}" />
+                </div>
+                <div class="form-group">
+                    <label th:for="publisherInput">Yayıncı Bilgileri</label>
+                    <div class="card">
+                        <div class="card-body">
+                            <div id="publisher" class="alert alert-secondary">
+                                Yayıncı seçilmedi.
+                            </div>
+                            <hr />
+                            <input class="form-control" data-toggle="dropdown" type="text" id="publisherInput"
+                                placeholder="Yayıcı ismi" th:field="*{publisher}" data-fetch-url="/api/publishers" />
+                            <div id="publisher-result-list" class="dropdown-menu" aria-labelledby="publisher"></div>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label th:for="writerInput">Yazar Bilgileri</label>
+                    <div class="card">
+                        <div class="card-body">
+                            <div id="writers">
+                                <div id="no-writer-chosen" class="alert alert-secondary">
+                                    Yazar seçilmedi.
+                                </div>
+                            </div>
+                            <hr />
+                            <input class="form-control" data-toggle="dropdown" type="text" id="writerInput"
+                                placeholder="Yazar ismi" data-fetch-url="/api/writers" />
+                            <div id="writer-result-list" class="dropdown-menu" aria-labelledby="publisher"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="lang">Kitap Dili</label>
+                    <input id="lang" type="text" class="form-control" placeholder="Kitap Dili"
+                        th:value="${book?.language}" th:field="*{language}" />
+                </div>
+                <div class="form-group">
+                    <label for="cover">Kapak Tipi</label>
+                    <select class="form-control" id="cover" th:field="*{coverFormat}">
+                        <option
+                            th:each="format : ${T(tr.edu.yildiz.yazilimkalite.librarymanagement.model.CoverFormat).values()}"
+                            th:value="${format}" th:text="${format.name}" th:selected="${book?.coverFormat == format}">
+                        </option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="address">Kitap Konumu</label>
+                    <input id="address" type="text" class="form-control" placeholder="Kitabın kütüphanedeki konumu"
+                        th:value="${book?.bookAddress}" th:field="*{bookAddress}" />
+                </div>
+                <button type="submit" class="btn btn-primary">Kaydet</button>
+            </form>
+        </div>
+    </div>
+</div>
