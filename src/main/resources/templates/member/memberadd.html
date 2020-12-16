@@ -1,0 +1,67 @@
+<div th:fragment="add-form" class="container">
+    <div class="row my-3">
+      <div class="col">
+        <h1 class="h2">
+          Kütüphane Üye
+          <th:block th:text="${updateForm} ? 'Düzeneleme' : 'Kayıt'"></th:block>
+          Formu
+        </h1>
+      </div>
+    </div>
+    <hr />
+    <div class="row">
+      <div th:if="${hasError}" class="col-sm-12 alert alert-danger">
+        <p class="my-15">Üye kayıt formu hatalı!</p>
+      </div>
+      <div class="col-sm-12">
+        <form
+          class="needs-validation"
+          th:action="@{/members/add}"
+          method="POST"
+          th:object="${member}"
+        >
+          <th:block th:if="${updateForm}">
+            <div class="form-group">
+              <label th:for="id">Kütüphane Kimlik Numarası</label>
+              <input class="form-control" type="text" th:id="memberId" name="memberId" readonly th:value="${member?.memberId}" >
+            </div>
+          </th:block>
+          <div class="form-group">
+            <label for="name">Ad</label>
+            <input
+              id="name"
+              type="text"
+              class="form-control"
+              placeholder="Ad"
+              th:value="${member?.name}"
+              th:field="*{name}"
+              required
+            />
+          </div>
+          <div class="form-group">
+            <label for="surname">Soyad</label>
+            <input
+              id="surname"
+              type="text"
+              class="form-control"
+              placeholder="Soyad"
+              th:value="${member?.surname}"
+              th:field="*{surname}"
+              required
+            />
+          </div>
+          <div class="form-group">
+            <label for="status">Üye Durumu</label>
+            <select class="form-control" id="status" th:field="*{status}">
+                <option
+                    th:each="status : ${T(tr.edu.yildiz.yazilimkalite.librarymanagement.model.MemberStatus).values()}"
+                    th:value="${status}" th:text="${status.name}" th:selected="${member?.status == status}">
+                </option>
+            </select>
+        </div>
+          <button type="submit" class="btn btn-primary">Kaydet</button>
+        </form>
+      </div>
+    </div>
+  </div>
+  
