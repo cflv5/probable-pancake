@@ -1,0 +1,23 @@
+<div th:fragment="profile" class="container">
+  <div class="row my-3">
+    <div class="col">
+      <h1>Yazar Profili</h1>
+    </div>
+  </div>
+  <hr>
+  <div class="row">
+    <div class="col-sm-12">
+      <h2 th:text="${writer?.name} + ' ' +  ${writer?.surname}"></h2>
+    </div>
+    <div class="col-sm-12">
+      <div class="card">
+        <div class="card-header">
+          Yazarın Kitapları
+        </div>
+        <div class="card-body" th:each="book : ${writer?.books}">
+            <a class="btn btn-link" th:href="@{/books/} + ${book.id}" target="_blank"  th:text="${book.name}"></a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
