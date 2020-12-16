@@ -1,0 +1,25 @@
+<div th:fragment="profile" class="container-fluid">
+  <div class="row my-3">
+    <div class="col">
+      <h1 class="h2">Yayıncı Firma Profili</h1>
+    </div>
+  </div>
+  <hr>
+  <div class="row">
+    <div class="col">
+      <div th:if="${success}">
+        Yayıncı başarıyla eklendi.
+      </div>
+    </div>
+    <div class="col-sm-12">
+      <input type="text" readonly th:value="${publisher?.name}">
+    </div>
+    <div class="col-sm-12">
+      <th:block th:each="book : ${publisher?.books}">
+        <div class="alert alert-primary">
+          <a th:href="@{/books/${book.id}}" th:text="${book.name}"></a>
+        </div>
+      </th:block>
+    </div>
+  </div>
+</div>

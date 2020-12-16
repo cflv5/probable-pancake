@@ -1,0 +1,41 @@
+<div th:fragment="add-form" class="container">
+    <div class="row my-3">
+      <div class="col">
+        <h1 class="h2">
+          Yayıncı Firma
+          <th:block th:text="${updateForm} ? 'Düzeneleme' : 'Kayıt'"></th:block>
+          Formu
+        </h1>
+      </div>
+    </div>
+    <hr />
+    <div class="row">
+      <div th:if="${hasError}" class="col-sm-12 alert alert-danger">
+        <p class="my-15">Yayıncı firma kayıt formu hatalı!</p>
+      </div>
+      <div class="col-sm-12">
+        <form
+          th:action="@{/publishers/add}"
+          method="POST"
+          th:object="${publisher}"
+        >
+          <th:block th:if="${updateForm}">
+              <input type="hidden" th:field="*{id}" th:value="${publisher?.id}" >
+          </th:block>
+          <div class="form-group">
+            <label for="inputName">Ad</label>
+            <input
+              id="inputName"
+              type="text"
+              class="form-control"
+              placeholder="Ad"
+              th:value="${publisher?.name}"
+              th:field="*{name}"
+            />
+          </div>
+          <button type="submit" class="btn btn-primary">Kaydet</button>
+        </form>
+      </div>
+    </div>
+  </div>
+  
