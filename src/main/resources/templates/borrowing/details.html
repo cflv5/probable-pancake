@@ -1,0 +1,76 @@
+<div th:fragment="detail" class="container">
+    <div class="row">
+        <div class="col my-1">
+            <h2>Ödünç Kaydı Görüntüleme</h2>
+        </div>
+    </div>
+    <hr>
+    <div class="row">
+        <div th:if="${noRetroactiveExtention}" class="col-sm-12 alert alert-danger">
+            <p class="my-15">İadesi geç kalmış ödünç kayıtlarının teslim tarihi uzatılamaz.</p>
+        </div>
+        <div th:if="${noExtensionRightLeft}" class="col-sm-12 alert alert-danger">
+            <p class="my-15">Ödünç kaydının iade tarihi daha fazla artırılamaz.</p>
+        </div>
+        <div th:if="${alreadyReturned}" class="col-sm-12 alert alert-info">
+            <p class="my-15">Zaten iade edilmiş.</p>
+        </div>
+        <div th:if="${success}" class="col-sm-12 alert alert-success">
+            <p class="my-15" th:text="${successMessage != null ? successMessage : 'İşlem başarılı.'}"></p>
+        </div>
+        <div th:if="${borrowing.status == T(tr.edu.yildiz.yazilimkalite.librarymanagement.model.BorrowingStatus).LATE}"
+            class="col-sm-12 alert alert-danger">
+            <p class="my-15">Geç iade yapıldı. Üye profilini incelemek için <a
+                    th:href="@{/members/} + ${borrowing.member.memberId}" target="_blank"
+                    rel="noopener noreferrer">tıklayın</a>.
+            </p>
+        </div>
+        <div th:if="${late}" class="col-sm-12 alert alert-danger">
+            <p class="my-15">İade tarihi geçti. Üye profilini incelemek için <a
+                    th:href="@{/members/} + ${borrowing.member.memberId}" target="_blank"
+                    rel="noopener noreferrer">tıklayın</a>.
+            </p>
+        </div>
+        <div class="col my-1">
+            <label for="id">Kayıt Kodu</label>
+            <input type="text" readonly class="form-control" id="id" th:value="${borrowing?.id}">
+        </div>
+        <div class="col my-1">
+            <label for="name">Üye Bilgileri</label>
+            <input class="form-control" type="text" readonly id="name"
+                th:value="${borrowing?.member?.name} + ' ' + ${borrowing?.member?.surname} + ' - ' + ${borrowing?.member?.memberId}">
+        </div>
+        <div class="col-sm-12 my-1">
+            <label for="name">Ödünç Alınan Kitaplar</label>
+            <th:block th:each="book : ${borrowing?.books}">
+                <input class="form-control" type="text" readonly th:id="${book.isbn}"
+                    th:value="${book.name} + ' - ' + ${book.isbn}">
+            </th:block>
+        </div>
+        <div class="col my-1">
+            <label for="deadline">Ödünç Kaydı Durumu</label>
+            <input id="deadline" class="form-control" type="text" readonly th:value="${borrowing?.status.name}">
+        </div>
+        <div class="col my-1">
+            <label for="starDate">Ödünç Alma Tarihi</label>
+            <input id="startDate" class="form-control" type="date" readonly th:value="${borrowing?.startDate}">
+        </div>
+        <div class="col my-1">
+            <label for="deadline">Son İade Tarihi</label>
+            <input id="deadline" class="form-control" type="date" readonly th:value="${borrowing?.deadline}">
+        </div>
+        <div th:if="${borrowing.refundDate}" class="col my-1">
+            <label for="deadline">İade Edildiği Tarih</label>
+            <input id="deadline" class="form-control" type="date" readonly th:value="${borrowing?.deadline}">
+        </div>
+        <th:block
+            th:unless="${borrowing.status == T(tr.edu.yildiz.yazilimkalite.librarymanagement.model.BorrowingStatus).LATE} OR ${borrowing.status == T(tr.edu.yildiz.yazilimkalite.librarymanagement.model.BorrowingStatus).RETURNED}">
+            <div class="col-sm-12 button-group">
+                <hr>
+                <a class="btn btn-info" th:unless="${noExtend}"
+                    th:href="@{/borrowings/} + ${borrowing?.id} + '/extend'">İade Tarihini Uzat</a>
+                <a class="btn btn-secondary" th:href="@{/borrowings/} + ${borrowing?.id} + '/refund'">İade Al</a>
+            </div>
+        </th:block>
+    </div>
+</div>
