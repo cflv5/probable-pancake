@@ -1,5 +1,6 @@
 package tr.edu.yildiz.yazilimkalite.librarymanagement.model;
 
+import java.sql.Timestamp;
 import java.util.List;
 
 import javax.persistence.Column;
@@ -9,14 +10,20 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
+
+import org.hibernate.annotations.CreationTimestamp;
+
+import tr.edu.yildiz.yazilimkalite.librarymanagement.dto.MemberDto;
 
 @Entity
 public class Member {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(nullable = false, unique = true)
+    private String memberId;
 
     @Column(nullable = false)
     private String name;
@@ -27,12 +34,53 @@ public class Member {
     @Enumerated(EnumType.STRING)
     private MemberStatus status;
 
-    @OneToMany
-    @JoinColumn(name = "member_id")
+    @OneToMany(mappedBy = "member")
     private List<Borrowing> borrowings;
+
+    @CreationTimestamp
+    private Timestamp createdAt;
 
     public Member() {
         super();
+    }
+
+    public static Member of(MemberDto memberDto) {
+		return new Member().name(memberDto.getName()).surname(memberDto.getSurname()).status(memberDto.getStatus());
+	}
+
+    public Member id(Long id) {
+        this.id = id;
+        return this;
+    }
+
+    public Member memberId(String memberId) {
+        this.memberId = memberId;
+        return this;
+    }
+
+    public Member name(String name) {
+        this.name = name;
+        return this;
+    }
+
+    public Member surname(String surname) {
+        this.surname = surname;
+        return this;
+    }
+
+    public Member status(MemberStatus status) {
+        this.status = status;
+        return this;
+    }
+
+    public Member borrowings(List<Borrowing> borrowings) {
+        this.borrowings = borrowings;
+        return this;
+    }
+
+    public Member createdAt(Timestamp createdAt) {
+        this.createdAt = createdAt;
+        return this;
     }
 
     public Long getId() {
@@ -41,6 +89,22 @@ public class Member {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public String getMemberId() {
+        return this.memberId;
+    }
+
+    public void setMemberId(String memberId) {
+        this.memberId = memberId;
+    }
+
+    public Timestamp getCreatedAt() {
+        return this.createdAt;
+    }
+
+    public void setCreatedAt(Timestamp createdAt) {
+        this.createdAt = createdAt;
     }
 
     public String getName() {
@@ -77,8 +141,8 @@ public class Member {
 
     @Override
     public String toString() {
-        return "Member [borrowings=" + borrowings + ", id=" + id + ", name=" + name + ", status=" + status
-                + ", surname=" + surname + "]";
+        return "Member [borrowings=" + borrowings + ", creationTime=" + createdAt + ", id=" + id + ", libraryId="
+                + memberId + ", name=" + name + ", status=" + status + ", surname=" + surname + "]";
     }
 
 }
