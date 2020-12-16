@@ -1,16 +1,25 @@
 package tr.edu.yildiz.yazilimkalite.librarymanagement.model;
 
 import java.sql.Timestamp;
+import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
+
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 import org.hibernate.annotations.CreationTimestamp;
 
+import tr.edu.yildiz.yazilimkalite.librarymanagement.dto.PublisherDto;
+
 @Entity
+@JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class, property = "id")
 public class Publisher {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -22,8 +31,35 @@ public class Publisher {
     @CreationTimestamp
     private Timestamp createdAt;
 
+    @OneToMany(mappedBy = "publisher", cascade = CascadeType.PERSIST)
+    private List<Book> books;
+
     public Publisher() {
         super();
+    }
+
+    public static Publisher of(PublisherDto publisherDto) {
+        return new Publisher().name(publisherDto.getName());
+    }
+
+    public Publisher id(Long id) {
+        this.id = id;
+        return this;
+    }
+
+    public Publisher name(String name) {
+        this.name = name;
+        return this;
+    }
+
+    public Publisher createdAt(Timestamp createdAt) {
+        this.createdAt = createdAt;
+        return this;
+    }
+
+    public Publisher books(List<Book> books) {
+        this.books = books;
+        return this;
     }
 
     public Long getId() {
@@ -50,9 +86,17 @@ public class Publisher {
         this.createdAt = createdAt;
     }
 
+    public List<Book> getBooks() {
+        return this.books;
+    }
+
+    public void setBooks(List<Book> books) {
+        this.books = books;
+    }
+
     @Override
     public String toString() {
-        return "Publisher [createdAt=" + createdAt + ", id=" + id + ", name=" + name + "]";
+        return "Publisher [books=" + books + ", createdAt=" + createdAt + ", id=" + id + ", name=" + name + "]";
     }
 
 }
