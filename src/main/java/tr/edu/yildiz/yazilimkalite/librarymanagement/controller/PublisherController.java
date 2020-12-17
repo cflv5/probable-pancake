@@ -4,7 +4,8 @@ import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.view.RedirectView;
@@ -30,12 +32,18 @@ public class PublisherController {
     private PublisherService publisherService;
 
     @GetMapping({ "/", "" })
-    public ModelAndView getPublisherDashBoard(Model model) {
-        Page<Publisher> publishersPage = publisherService.getPaginated(PageRequest.of(0, 10));
+    public ModelAndView getPublisherDashBoard(@RequestParam(required = false, defaultValue = "") String query,
+            @PageableDefault Pageable page, Model model) {
 
-        model.addAttribute(ViewConstants.FRAGMENT, "");
+        String url = "/publishers?";
+        if (!query.isBlank()) {
+            url = "/publishers?query=" + query + "&";
+        }
 
-        model.addAttribute("publishers", publishersPage);
+        Page<Publisher> publishersPage = publisherService.getPaginatedBySearch(query, page);
+        model.addAttribute(ViewConstants.FRAGMENT, "publisher/publisher-index");
+        model.addAttribute("page", publishersPage);
+        model.addAttribute("url", url);
 
         return new ModelAndView(ViewConstants.BOILERPLATE);
     }
@@ -60,7 +68,7 @@ public class PublisherController {
 
     @GetMapping("/add")
     public String getAddPublisherForm(Model model) {
-        if(model.getAttribute(ViewConstants.PUBLISHER) == null) {
+        if (model.getAttribute(ViewConstants.PUBLISHER) == null) {
             model.addAttribute(ViewConstants.PUBLISHER, new PublisherDto());
         }
 

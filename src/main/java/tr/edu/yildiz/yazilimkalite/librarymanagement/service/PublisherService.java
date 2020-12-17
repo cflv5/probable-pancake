@@ -50,12 +50,12 @@ public class PublisherService {
         return publisher;
 	}
 
-	public Page<Publisher> getPaginated(Pageable page) {
-		return publisherRepository.findAll(page);
+	public Page<Publisher> getPaginatedBySearch(String query, Pageable page) {
+        return publisherRepository.findAllBySearchQuery(query.toLowerCase(), page);
 	}
 
 	public List<Publisher> getBySearchQuery(String query, Pageable page) {
-		return publisherRepository.findAllBySearchQuery(query, page);
+		return publisherRepository.findAllBySearchQuery(query.toLowerCase(), page).getContent();
 	}
 
 }
