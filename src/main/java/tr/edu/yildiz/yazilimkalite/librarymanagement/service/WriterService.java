@@ -49,8 +49,8 @@ public class WriterService {
         return writer;
     }
 
-    public Page<Writer> getPaginated(Pageable page) {
-        return writerRepository.findAll(page);
+    public Page<Writer> getPaginatedBySearchQuery(String query, Pageable page) {
+        return writerRepository.findAllBySearchQuery(query, page);
     }
 
 	public List<Writer> getAllByIds(List<Long> writerIds) {

@@ -4,7 +4,8 @@ import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.view.RedirectView;
@@ -32,13 +34,18 @@ public class WriterController {
     private WriterService writerService;
 
     @GetMapping({ "/", "" })
-    public ModelAndView getWriterDashBoard(Model model) {
-        Page<Writer> writers = writerService.getPaginated(PageRequest.of(0, 10));
+    public ModelAndView getWriterDashBoard(@RequestParam(required = false, defaultValue = "") String query,
+            @PageableDefault Pageable page, Model model) {
 
-        model.addAttribute("writers", writers);
+        String url = "/writers?";
+        if (!query.isBlank()) {
+            url = "/writers?query=" + query + "&";
+        }
 
-        model.addAttribute(ViewConstants.FRAGMENT, "");
-
+        Page<Writer> writers = writerService.getPaginatedBySearchQuery(query.toLowerCase(), page);
+        model.addAttribute("page", writers);
+        model.addAttribute("url", url);
+        model.addAttribute(ViewConstants.FRAGMENT, "writer/writer-index");
         return new ModelAndView(ViewConstants.BOILERPLATE);
     }
 
