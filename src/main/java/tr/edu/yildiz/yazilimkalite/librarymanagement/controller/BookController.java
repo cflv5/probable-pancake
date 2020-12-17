@@ -8,8 +8,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort.Direction;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -40,17 +40,18 @@ public class BookController {
     private Logger logger = LoggerFactory.getLogger(BookController.class);
 
     @GetMapping({ "", "/" })
-    public ModelAndView showBooksDashboard(@RequestParam(required = false) String search, Model model) {
+    public ModelAndView showBooksDashboard(@RequestParam(required = false, defaultValue = "") String query,
+            @PageableDefault Pageable page, Model model) {
         Page<Book> books = null;
-
-        if (search != null && !search.isBlank()) {
-            books = bookService.getBySearchQueryPaginated(search, PageRequest.of(0, 10));
-        } else {
-            books = bookService.getPaginatedAndSortedByName(PageRequest.of(0, 10, Direction.ASC, "name"));
+        String url = "/books?";
+        if (!query.isBlank()) {
+            url = "/books?query=" + query + "&";
         }
+        books = bookService.getBySearchQueryPaginated(query, page);
 
-        model.addAttribute("books", books);
-        model.addAttribute(ViewConstants.FRAGMENT, "book/dasboard");
+        model.addAttribute("page", books);
+        model.addAttribute("url", url);
+        model.addAttribute(ViewConstants.FRAGMENT, "book/book-index");
 
         return new ModelAndView(ViewConstants.BOILERPLATE);
     }
@@ -104,7 +105,6 @@ public class BookController {
             model.addAttribute(ViewConstants.UPDATE_FORM, book);
             model.addAttribute(ViewConstants.FRAGMENT, "book/add-form");
         }
-
 
         return view;
     }

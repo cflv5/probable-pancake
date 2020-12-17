@@ -111,14 +111,12 @@ public class BookService {
         }
     }
 
-    public Page<Book> getBySearchQueryPaginated(String search, Pageable page) {
-        return bookRepository.findAllBySearchQuery(search, false, page);
+    public Page<Book> getBySearchQueryPaginated(String query, Pageable page) {
+        return bookRepository.findAllBySearchQuery(query.toLowerCase(), page);
     }
 
     public List<Book> getBookBySearchQuery(String query, Boolean borrowed, int size) {
-        Page<Book> result = bookRepository.findAllBySearchQuery(query.toLowerCase(), borrowed, PageRequest.of(0, size));
-
-        return result.getContent();
+        return bookRepository.findAllBySearchQueryAndBorrowed(query.toLowerCase(), borrowed, PageRequest.of(0, size)).getContent();
     }
 
 }

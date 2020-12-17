@@ -21,5 +21,11 @@ public interface BookRepository extends PagingAndSortingRepository<Book, Long> {
                     "WHERE (b.borrowed = :borrowed) AND " +
                     "(lower(b.name) LIKE CONCAT(:query, '%') OR lower(b.isbn) = :query)"
                 )
-	Page<Book> findAllBySearchQuery(String query, Boolean borrowed, Pageable page);
+    Page<Book> findAllBySearchQueryAndBorrowed(String query, Boolean borrowed, Pageable page);
+    
+    @Query(value = "SELECT b FROM Book b " + 
+                    "WHERE " +
+                    "(lower(b.name) LIKE CONCAT(:query, '%') OR lower(b.isbn) = :query)"
+                )
+	Page<Book> findAllBySearchQuery(String query, Pageable page);
 }
