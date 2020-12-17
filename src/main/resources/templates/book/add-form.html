@@ -49,8 +49,9 @@
                     <label th:for="publisherInput">Yayıncı Bilgileri</label>
                     <div class="card">
                         <div class="card-body">
-                            <div id="publisher" class="alert alert-secondary">
-                                Yayıncı seçilmedi.
+                            <div id="publisher"
+                                th:text="${book?.publisher != null} ? ${book?.publisher.name} : 'Yayıncı seçilmedi.'"
+                                class="alert alert-secondary">
                             </div>
                             <hr />
                             <input class="form-control" data-toggle="dropdown" type="text" id="publisherInput"
@@ -65,9 +66,18 @@
                     <div class="card">
                         <div class="card-body">
                             <div id="writers">
-                                <div id="no-writer-chosen" class="alert alert-secondary">
-                                    Yazar seçilmedi.
-                                </div>
+                                <th:block th:if="${book?.writers == null}">
+                                    <div id="no-writer-chosen" class="alert alert-secondary">
+                                        Yazar seçilmedi.
+                                    </div>
+                                </th:block>
+                                <th:block th:each="writer : ${book.writers}">
+                                    <div class="writer alert alert-info" th:id="'writer-' + ${writer.id}">
+                                        <span th:text="${writer.name} + ' ' + ${writer.surname}"></span>
+                                        <input type="hidden" name="writers" th:value="${writer.id}">
+                                        <em class='fas fa-times'></em>
+                                    </div>
+                                </th:block>
                             </div>
                             <hr />
                             <input class="form-control" data-toggle="dropdown" type="text" id="writerInput"

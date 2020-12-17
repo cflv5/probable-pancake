@@ -4,6 +4,14 @@ $(document).ready(function () {
 
     const writers = [];
 
+    if ($(".writer").length != 0) {
+        $(".writer").each(function() {
+            const id = $(this).children("input").val();
+            $(this).children("em").click(() => removeWriter(id));
+            writers.push(Number.parseInt(id));
+        });
+    }
+
     $("#publisherInput").keyup(function () {
         const value = $(this).val();
         const publisherList = $("#publisher-result-list");
@@ -76,7 +84,7 @@ $(document).ready(function () {
         if (!writers.includes(writer.id)) {
             writers.push(writer.id);
 
-            const item = $(`<div class="book alert alert-info" id="writer-${writer.id}">
+            const item = $(`<div class="writer alert alert-info" id="writer-${writer.id}">
               <span>${writer.name} ${writer.surname}</span>
               <input type="hidden" name="writers" value="${writer.id}">
           </div>`);
