@@ -37,6 +37,7 @@
                         <th scope="row">Soyisim</th>
                         <th scope="row">E-Posta</th>
                         <th scope="row">Durum</th>
+                        <th scope="row">Gözat</th>
                     </thead>
                     <tbody>
                         <th:block th:each="item : ${page.content}">
@@ -45,6 +46,9 @@
                                 <td th:text="${item.surname}"></td>
                                 <td th:text="${item.email}"></td>
                                 <td th:text="${item.status.name}"></td>
+                                <td>
+                                    <a th:href="@{/users/edit/} + ${item.email}"><em class="fas fa-eye"></em></a>
+                                </td>
                             </tr>
                         </th:block>
                     </tbody>
