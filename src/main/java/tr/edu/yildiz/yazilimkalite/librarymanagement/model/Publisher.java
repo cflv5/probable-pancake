@@ -11,15 +11,13 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 
 import org.hibernate.annotations.CreationTimestamp;
 
 import tr.edu.yildiz.yazilimkalite.librarymanagement.dto.PublisherDto;
 
 @Entity
-@JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class, property = "id")
 public class Publisher {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -30,8 +28,9 @@ public class Publisher {
 
     @CreationTimestamp
     private Timestamp createdAt;
-
+    
     @OneToMany(mappedBy = "publisher", cascade = CascadeType.PERSIST)
+    @JsonBackReference
     private List<Book> books;
 
     public Publisher() {

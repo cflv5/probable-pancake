@@ -14,11 +14,9 @@ import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 @Entity
-@JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class, property = "id")
 public class Book {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -46,12 +44,14 @@ public class Book {
     private String language;
 
     @ManyToOne
+    @JsonManagedReference
     private Publisher publisher;
-
+    
     @ElementCollection
     private List<String> bookTypes;
-
+    
     @ManyToMany
+    @JsonManagedReference
     private List<Writer> writers;
 
     @Column(columnDefinition = "boolean DEFAULT false")

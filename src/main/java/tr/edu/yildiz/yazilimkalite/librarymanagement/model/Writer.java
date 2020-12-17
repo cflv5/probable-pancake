@@ -9,13 +9,11 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 
 import tr.edu.yildiz.yazilimkalite.librarymanagement.dto.WriterDto;
 
 @Entity
-@JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class, property = "id")
 public class Writer {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,6 +26,7 @@ public class Writer {
     private String surname;
 
     @ManyToMany(mappedBy = "writers")
+    @JsonBackReference
     private List<Book> books;
 
     public Writer() {
