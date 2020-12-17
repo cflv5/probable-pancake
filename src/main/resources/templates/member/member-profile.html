@@ -35,12 +35,12 @@
           th:value="${member?.status.name}" readonly />
       </div>
 
-      <th:block th:if="${avaiableToBorrow}">
-        <div class="col-sm-12 button-group">
-          <hr>
-          <a class="btn btn-primary" th:href="@{/borrowings/create?memberId=} + ${member?.memberId}">Kitap Ödünç Al</a>
-        </div>
-      </th:block>
+      <div class="col-sm-12 button-group">
+        <hr>
+        <a class="btn btn-primary" th:if="${avaiableToBorrow}"
+          th:href="@{/borrowings/create?memberId=} + ${member?.memberId}">Kitap Ödünç Al</a>
+        <a class="btn btn-primary" th:href="@{/members/edit/} + ${member?.memberId}">Düzenle</a>
+      </div>
     </div>
   </div>
 </div>
