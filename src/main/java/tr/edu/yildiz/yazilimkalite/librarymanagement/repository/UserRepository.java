@@ -15,8 +15,9 @@ public interface UserRepository extends PagingAndSortingRepository<User, Long> {
     Optional<User> findByEmail(String email);
 
     @Query(value = "SELECT u FROM User u " + 
-            "WHERE lower(u.name) = :query OR " + 
-            "lower(u.surname) = :query OR " + 
+            "WHERE " + 
+            "lower(u.name) LIKE :query% OR " + 
+            "lower(u.surname) LIKE :query% OR " + 
             "lower(u.email) LIKE :query%"
         )
     Page<User> findAllBySearchQuery(String query, Pageable page);

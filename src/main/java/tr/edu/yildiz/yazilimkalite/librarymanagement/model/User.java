@@ -16,6 +16,9 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonProperty.Access;
+
 import org.hibernate.annotations.CreationTimestamp;
 
 import tr.edu.yildiz.yazilimkalite.librarymanagement.dto.UserRegistrationDto;
@@ -37,13 +40,14 @@ public class User {
     private String email;
 
     @Column(nullable = false)
+    @JsonProperty(access = Access.WRITE_ONLY)
     private String password;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private UserStatus status;
 
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
     private List<UserRole> roles;
 

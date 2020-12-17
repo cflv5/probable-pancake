@@ -7,7 +7,9 @@ import javax.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -17,6 +19,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.view.RedirectView;
@@ -50,7 +53,7 @@ public class UserController {
         if (model.getAttribute("user") == null) {
             model.addAttribute("user", new UserRegistrationDto());
         }
-        
+
         model.addAttribute("roles", userRoleService.getAllUserRoles());
         model.addAttribute(ViewConstants.FRAGMENT, "user/useradd :: user-add-form");
 
@@ -94,8 +97,16 @@ public class UserController {
     }
 
     @GetMapping({ "/", "" })
-    public String showUserIndex(Model model) {
-        model.addAttribute("users", userService.getPaginatedUsers(PageRequest.of(0, 10)));
+    public String showUserIndex(Model model, @RequestParam(required = false, defaultValue = "") String query,
+            @PageableDefault Pageable page) {
+        String url = "/users?";
+        if(!query.isBlank()) {
+            url = "/users?query=" + query + "&"; 
+        }
+
+        Page<User> users = userService.getPaginatedUsersWithQuery(query.toLowerCase(), page);
+        model.addAttribute("page", users);
+        model.addAttribute("url", url);
         model.addAttribute(ViewConstants.FRAGMENT, "user/userindex :: usertable");
         return ViewConstants.BOILERPLATE;
     }
