@@ -22,4 +22,10 @@ public interface MemberRepository extends PagingAndSortingRepository<Member, Lon
 			"OR m.memberId LIKE :query%)")
 	Page<Member> findByQueryAndStatus(String query, MemberStatus status, Pageable page);
 
+	@Query("SELECT m FROM Member m " +
+			"WHERE " +
+			"(lower(m.name) LIKE :query% OR lower(m.surname) LIKE :query% " + 
+			"OR m.memberId LIKE :query%)")
+	Page<Member> findByQuery(String query, Pageable page);
+
 }

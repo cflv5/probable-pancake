@@ -1,12 +1,11 @@
 package tr.edu.yildiz.yazilimkalite.librarymanagement.controller;
 
-import java.util.List;
-
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -16,6 +15,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.view.RedirectView;
@@ -32,15 +32,18 @@ public class MemberController {
     private MemberService memberService;
 
     @GetMapping({ "/", "" })
-    public ModelAndView getMemberDashBoard(Model model) {
-        Page<Member> pageResult = memberService.getPaginated(PageRequest.of(0, 10));
-        List<MemberDto> members = memberService.convertToDto(pageResult.getContent());
+    public ModelAndView getMemberDashBoard(@RequestParam(required = false, defaultValue = "") String query,
+            @PageableDefault Pageable page, Model model) {
+        String url = "/members?";
 
-        model.addAttribute(ViewConstants.FRAGMENT, "");
-
-        model.addAttribute("members", members);
-        model.addAttribute("pageResult", pageResult);
-
+        if(!query.isBlank()) {
+            url = "/members?query=" + query + "&";
+        }
+        
+        Page<Member> members = memberService.getPaginatedByQuery(query, page);
+        model.addAttribute(ViewConstants.FRAGMENT, "member/member-index.html");
+        model.addAttribute("page", members);
+        model.addAttribute("url", url);
         return new ModelAndView(ViewConstants.BOILERPLATE);
     }
 
@@ -59,7 +62,7 @@ public class MemberController {
 
             Boolean isAvaiableToBorrow = memberService.isAvaiableToBorrowBook(member);
             model.addAttribute("avaiableToBorrow", isAvaiableToBorrow);
-            
+
             model.addAttribute(ViewConstants.MEMBER, member);
         }
         return view;

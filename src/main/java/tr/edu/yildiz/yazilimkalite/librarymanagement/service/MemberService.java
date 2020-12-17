@@ -27,10 +27,9 @@ public class MemberService {
     @Autowired
     private MemberRepository memberRepository;
 
-    public Page<Member> getPaginated(Pageable page) {
-        return memberRepository.findAll(page);
+    public Page<Member> getPaginatedByQuery(String query, Pageable page) {
+        return memberRepository.findByQuery(query.toLowerCase(), page);
     }
-
     public List<MemberDto> convertToDto(List<Member> members) {
         return members.stream().map(MemberDto::of).collect(Collectors.toList());
     }
