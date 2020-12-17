@@ -87,7 +87,7 @@ public class Writer {
 
     @Override
     public String toString() {
-        return "Writer [books=" + books + ", id=" + id + ", name=" + name + ", surname=" + surname + "]";
+        return "Writer [books=" + books.getClass() + ", id=" + id + ", name=" + name + ", surname=" + surname + "]";
     }
 
     public static Writer of(WriterDto writerDto) {
