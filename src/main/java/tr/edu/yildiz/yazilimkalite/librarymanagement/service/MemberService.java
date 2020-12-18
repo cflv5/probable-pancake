@@ -15,6 +15,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import tr.edu.yildiz.yazilimkalite.librarymanagement.dto.MemberDto;
+import tr.edu.yildiz.yazilimkalite.librarymanagement.dto.mapping.StatisticResultMapping;
 import tr.edu.yildiz.yazilimkalite.librarymanagement.model.Member;
 import tr.edu.yildiz.yazilimkalite.librarymanagement.model.MemberStatus;
 import tr.edu.yildiz.yazilimkalite.librarymanagement.repository.MemberRepository;
@@ -79,5 +80,9 @@ public class MemberService {
 
 	public Boolean isAvaiableToBorrowBook(Member member) {
 		return member.getStatus().equals(MemberStatus.ACTIVE);
+    }
+    
+	public List<StatisticResultMapping> getMemberCountByStatus() {
+		return memberRepository.countGroupByStatus();
 	}
 }

@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import tr.edu.yildiz.yazilimkalite.librarymanagement.dto.MemberDto;
+import tr.edu.yildiz.yazilimkalite.librarymanagement.dto.mapping.StatisticResultMapping;
 import tr.edu.yildiz.yazilimkalite.librarymanagement.dto.response.Response;
 import tr.edu.yildiz.yazilimkalite.librarymanagement.model.Member;
 import tr.edu.yildiz.yazilimkalite.librarymanagement.model.MemberStatus;
@@ -32,5 +33,12 @@ public class MemberApiController {
             return new ResponseEntity<>(new Response<>(false, null, "Member could not found."), HttpStatus.NOT_FOUND);
         }
         return new ResponseEntity<>(new Response<>(true, memberService.convertToDto(members), "Member found."), HttpStatus.OK);
+    }
+
+    @GetMapping("/statistics/count")
+    public ResponseEntity<Response<List<StatisticResultMapping>>> getMemberCountStatistics(
+            @RequestParam(required = false) String by) {
+        return new ResponseEntity<>(new Response<>(true, memberService.getMemberCountByStatus(), "membercount"),
+                HttpStatus.OK);
     }
 }
