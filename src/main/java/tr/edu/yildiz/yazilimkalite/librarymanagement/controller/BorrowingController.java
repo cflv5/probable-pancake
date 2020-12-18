@@ -5,7 +5,9 @@ import java.util.Arrays;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -58,11 +60,19 @@ public class BorrowingController {
     private static final String BORROWING_CODE_NOT_FOUND_MESSAGE = " kodlu kayıt bulunamadı.";
 
     @GetMapping({ "", "/" })
-    public ModelAndView showBorrowingsDashbord(Model model) {
+    public ModelAndView showBorrowingsDashbord(@RequestParam(required = false, defaultValue = "") String query,
+            @PageableDefault Pageable page, Model model) {
         ModelAndView view = new ModelAndView(ViewConstants.BOILERPLATE);
-        model.addAttribute("borrowings",
-                borrowingService.getPaginatedBorrowingsByStatusNotReturned(PageRequest.of(0, 10)));
-        model.addAttribute(ViewConstants.FRAGMENT, "user/userindex :: usertable");
+
+        String url = "/borrowings?";
+        if (!query.isBlank()) {
+            url = "/borrowings?query=" + query + "&";
+        }
+
+        Page<Borrowing> borrowings = borrowingService.getPaginatedBorrowingsByQuery(query, page);
+        model.addAttribute("page", borrowings);
+        model.addAttribute("url", url);
+        model.addAttribute(ViewConstants.FRAGMENT, "borrowing/borrowing-index");
         return view;
     }
 

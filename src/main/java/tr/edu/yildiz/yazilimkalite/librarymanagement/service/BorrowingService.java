@@ -93,8 +93,8 @@ public class BorrowingService {
 		return borrowing;
 	}
 
-	public Page<Borrowing> getPaginatedBorrowingsByStatusNotReturned(Pageable page) {
-		return borrowingRepository.findAllByStatus(BorrowingStatus.NOT_RETURNED, page);
+	public Page<Borrowing> getPaginatedBorrowingsByQuery(String query, Pageable page) {
+		return borrowingRepository.findAllByQuery(query, page);
 	}
 
 	public boolean isBorrowingLate(Borrowing borrowing) {
