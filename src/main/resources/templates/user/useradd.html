@@ -1,0 +1,65 @@
+<div th:fragment="user-add-form" class="container">
+    <div class="row my-3">
+        <div class="col">
+            <h1 class="h2">Kullanıcı <th:block th:text="${updateForm} ? 'Düzeneleme' : 'Kayıt'"></th:block> Formu</h1>
+        </div>
+    </div>
+    <hr>
+    <div class="row">
+        <div th:if="${success}" class="col-sm-12 alert alert-success">
+            İşlem başarıyla gerçekleşti.
+        </div>
+        <div th:if="${hasError}" class="col-sm-12 alert alert-danger">
+            <p class="my-15">Üye kayıt formu hatalı!</p>
+            <ul class="list-group" th:if="${integrityError}">
+                <li class="list-group-item" th:text="${errorMessage}"></li>
+            </ul>
+        </div>
+        <div class="col-sm-12">
+            <form th:action="${updateForm} ? @{/users/edit/} +  ${email} : @{/users/add}" method="POST" th:object="${user}">
+                <div class="form-group">
+                    <label for="inputName">Ad</label>
+                    <input id="inputName" type="text" class="form-control" placeholder="Ad" th:value="${user?.name}"
+                        th:field="*{name}">
+                </div>
+                <div class="form-group">
+                    <label for="inputSurname">Soyad</label>
+                    <input id="inputSurname" type="text" class="form-control" placeholder="Soyad"
+                        th:value="${user?.surname}" th:field="*{surname}">
+                </div>
+                <div class="form-group">
+                    <label for="inputEmail">E-posta Adresi</label>
+                    <input type="email" class="form-control" id="inputEmail" 
+                        th:value="${user?.email}" placeholder="E-posta Adresi" th:field="*{email}">
+                </div>
+
+                <div class="form-group" th:unless=${updateForm}>
+                    <label for="exampleInputPassword1">Şifre</label>
+                    <input type="password" class="form-control" th:value="${user?.password}" placeholder="Şifre"
+                        th:field="*{password}">
+                </div>
+
+                <div class="form-group">
+                    <label for="inputStatus">Kullanıcı Durumu</label>
+                    <select class="form-control" id="inputStatus" th:field="*{status}">
+                        <option
+                            th:each="status : ${T(tr.edu.yildiz.yazilimkalite.librarymanagement.model.UserStatus).values()}"
+                            th:value="${status}" th:text="${status.name}" th:selected="${user?.status == status}">
+                        </option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <th:block th:each="role : ${roles}">
+                        <div class="form-check form-check-inline">
+                            <input type="checkbox" class="form-check-input" th:field="*{roles}" th:value="${role.id}"
+                                th:id="${role.id}">
+                            <label class="form-check-label" th:for="${role.id}" th:text="${role.role}"></label>
+                        </div>
+                    </th:block>
+                </div>
+                <button type="submit" class="btn btn-primary">Kaydet</button>
+            </form>
+        </div>
+    </div>
+
+</div>

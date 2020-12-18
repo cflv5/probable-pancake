@@ -1,19 +1,20 @@
 package tr.edu.yildiz.yazilimkalite.librarymanagement.model;
 
-import java.sql.Timestamp;
+import java.sql.Date;
 import java.util.List;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
+
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 @Entity
 public class Book {
@@ -28,30 +29,33 @@ public class Book {
     private String isbn;
 
     @Column
-    private Timestamp publishDate;
+    private Date publishDate;
 
     @Column
-    private Integer numOfPage;
+    private Integer numberOfPages;
 
     @Column
     @Enumerated(EnumType.STRING)
     private CoverFormat coverFormat;
 
-    @OneToOne
-    private BookAddress bookAdress;
+    private String bookAddress;
 
     @Column
     private String language;
 
-    @OneToOne
+    @ManyToOne
+    @JsonManagedReference
     private Publisher publisher;
+    
+    @ElementCollection
+    private List<String> bookTypes;
+    
+    @ManyToMany
+    @JsonManagedReference
+    private List<Writer> writers;
 
-    @OneToOne
-    private BookType bookType;
-
-    @OneToMany(cascade = CascadeType.ALL)
-    @JoinColumn(name = "book_id")
-    private List<BookTag> tags;
+    @Column(columnDefinition = "boolean DEFAULT false")
+    private Boolean borrowed;
 
     public Long getId() {
         return id;
@@ -69,20 +73,20 @@ public class Book {
         this.name = name;
     }
 
-    public Timestamp getPublishDate() {
+    public Date getPublishDate() {
         return publishDate;
     }
 
-    public void setPublishDate(Timestamp publishDate) {
+    public void setPublishDate(Date publishDate) {
         this.publishDate = publishDate;
     }
 
-    public Integer getNumOfPage() {
-        return numOfPage;
+    public Integer getNumberOfPages() {
+        return numberOfPages;
     }
 
-    public void setNumOfPage(Integer numOfPage) {
-        this.numOfPage = numOfPage;
+    public void setNumberOfPages(Integer numberOfPage) {
+        this.numberOfPages = numberOfPage;
     }
 
     public CoverFormat getCoverFormat() {
@@ -93,12 +97,12 @@ public class Book {
         this.coverFormat = coverFormat;
     }
 
-    public BookAddress getBookAdress() {
-        return bookAdress;
+    public String getBookAddress() {
+        return bookAddress;
     }
 
-    public void setBookAdress(BookAddress bookAdress) {
-        this.bookAdress = bookAdress;
+    public void setBookAddress(String bookAddress) {
+        this.bookAddress = bookAddress;
     }
 
     public String getLanguage() {
@@ -117,20 +121,12 @@ public class Book {
         this.publisher = publisher;
     }
 
-    public BookType getBookType() {
-        return bookType;
+    public List<String> getBookTypes() {
+        return bookTypes;
     }
 
-    public void setBookType(BookType bookType) {
-        this.bookType = bookType;
-    }
-
-    public List<BookTag> getTags() {
-        return tags;
-    }
-
-    public void setTags(List<BookTag> tags) {
-        this.tags = tags;
+    public void setBookTypes(List<String> bookTypes) {
+        this.bookTypes = bookTypes;
     }
 
     public String getIsbn() {
@@ -139,6 +135,34 @@ public class Book {
 
     public void setIsbn(String isbn) {
         this.isbn = isbn;
+    }
+
+    public List<Writer> getWriters() {
+        return this.writers;
+    }
+
+    public void setWriters(List<Writer> writers) {
+        this.writers = writers;
+    }
+
+    public Boolean isBorrowed() {
+        return this.borrowed;
+    }
+
+    public Boolean getBorrowed() {
+        return this.borrowed;
+    }
+
+    public void setBorrowed(Boolean borrowed) {
+        this.borrowed = borrowed;
+    }
+
+    @Override
+    public String toString() {
+        return "Book [bookAddress=" + bookAddress + ", bookTypes=" + bookTypes + ", coverFormat=" + coverFormat
+                + ", id=" + id + ", borrowed=" + borrowed + ", isbn=" + isbn + ", language=" + language + ", name="
+                + name + ", numOfPages=" + numberOfPages + ", publishDate=" + publishDate + ", publisher=" + publisher
+                + ", writers=" + writers + "]";
     }
 
 }

@@ -1,0 +1,32 @@
+<div th:fragment="profile" class="container-fluid">
+  <div class="row my-3">
+    <div class="col">
+      <h1 class="h2">Yayıncı Firma Profili</h1>
+    </div>
+  </div>
+  <hr>
+  <div class="row">
+    <div class="col">
+      <div th:if="${success}">
+        Yayıncı başarıyla eklendi.
+      </div>
+    </div>
+    <div class="col-sm-12">
+      <h2 th:text="${publisher?.name}"></h2>
+    </div>
+    <div class="col-sm-12">
+      <div class="card">
+        <div class="card-header">
+          Yazarın Kitapları
+        </div>
+        <div class="card-body">
+          <th:block th:each="book : ${publisher?.books}">
+            <div class="alert alert-primary">
+              <a class="btn btn-link" th:href="@{/books/} + ${book.id}" target="_blank" th:text="${book.name}"></a>
+            </div>
+          </th:block>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,46 @@
+<div th:fragment="add-form" class="container">
+  <div class="row my-3">
+    <div class="col">
+      <h1 class="h2">
+        Kütüphane Üyesi İnceleme
+      </h1>
+    </div>
+  </div>
+  <hr />
+  <div class="row">
+    <div class="col">
+      <div th:if="${success}">
+        <div class="alert alert-success"
+          th:text="${successMessage != null} ? ${successMessage} : 'İşlem başarıyla gerçekleşti.'">
+        </div>
+      </div>
+    </div>
+    <div class="col-sm-12">
+      <div class="form-group">
+        <label th:for="id">Kütüphane Kimlik Numarası</label>
+        <input class="form-control" type="text" th:id="memberId" readonly th:value="${member?.memberId}">
+      </div>
+      <div class="form-group">
+        <label for="name">Ad</label>
+        <input id="name" type="text" class="form-control" placeholder="Ad" th:value="${member?.name}" readonly />
+      </div>
+      <div class="form-group">
+        <label for="surname">Soyad</label>
+        <input id="surname" type="text" class="form-control" placeholder="Soyad" th:value="${member?.surname}"
+          readonly />
+      </div>
+      <div class="form-group">
+        <label for="status">Üye Durumu</label>
+        <input id="status" type="text" class="form-control" placeholder="Üyelik Durumu"
+          th:value="${member?.status.name}" readonly />
+      </div>
+
+      <div class="col-sm-12 button-group">
+        <hr>
+        <a class="btn btn-primary" th:if="${avaiableToBorrow}"
+          th:href="@{/borrowings/create?memberId=} + ${member?.memberId}">Kitap Ödünç Al</a>
+        <a class="btn btn-primary" th:href="@{/members/edit/} + ${member?.memberId}">Düzenle</a>
+      </div>
+    </div>
+  </div>
+</div>

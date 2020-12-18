@@ -1,0 +1,78 @@
+<div th:fragment="create-form" class="container">
+  <div class="row my-3">
+    <div class="col">
+      <h1 class="h2">
+        Ödünç Verme Kayıt Formu
+      </h1>
+    </div>
+  </div>
+  <hr />
+  <div class="row">
+    <div th:if="${hasError}" class="col-sm-12 alert alert-danger">
+      <p class="my-15">Ödünç alma formu hatalı!</p>
+      <div th:if="${integrityError}">
+        <ul class="list-group" th:if="${integrityError}">
+          <li class="list-group-item" th:if="${errorMessage}" th:text="${errorMessage}"></li>
+          <li class="list-group-item" th:if="${memberStatusError}">Üyenin statüsü kitap ödünç almak için uygun değil.
+            <a th:href="@{/members/} + ${memberId}" target="_blank">İncelemek için tıklayın</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+    <div class="col-sm-12">
+      <form th:object="${borrowing}" method="POST">
+        <div class="form-group">
+          <label th:for="memberId">Üye Bilgileri</label>
+          <div class="card">
+            <div class="card-body">
+              <div class="box" id="member-info">
+                <div id="member-name" class="alert alert-info"
+                  th:text="${member} ? ${member.name} + ' '+ ${member.surname} : 'Üye seçilmedi'"></div>
+              </div>
+              <hr />
+              <input class="form-control" required type="text" data-fetch-url="/api/members/" id="memberId"
+                name="member" placeholder="Üye kimlik numarası" data-toggle="dropdown" th:value="${member?.memberId}" />
+              <div id="member-result-list" class="dropdown-menu" aria-labelledby="publisher"></div>
+            </div>
+          </div>
+        </div>
+        <div class="form-group">
+          <label th:for="bookId">Kitap Bilgileri</label>
+          <div class="card">
+            <div class="card-body">
+              <div id="books">
+                <th:block th:if="${book}">
+                  <div class="book" th:id="book- + ${book.id}">
+                    <div class="alert alert-info">
+                      <span th:text="${book?.name}"></span>
+                      <input type="hidden" name="books" th:value="${book?.id}">
+                      <em class="fas fa-times"></em>
+                    </div>
+                  </div>
+                </th:block>
+                <th:block th:unless="${book}">
+                  <div id="no-book-chosen" class="alert alert-secondary">
+                    Kitap seçilmedi.
+                  </div>
+                </th:block>
+              </div>
+              <hr />
+              <input class="form-control" data-toggle="dropdown" type="text" id="bookId" placeholder="ISBN veya Kitap İsmi"
+                data-fetch-url="/api/books" />
+              <div id="book-result-list" class="dropdown-menu fluid" aria-labelledby="bookId"></div>
+            </div>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="startDate">Başlangıç Tarihi</label>
+          <input type="date" required id="startDate" class="form-control" placeholder="Tarih" th:field="*{startDate}" />
+        </div>
+        <div class="form-group">
+          <label for="deadline">Bitiş Tarihi</label>
+          <input type="date" required id="deadline" class="form-control" placeholder="Tarih" th:field="*{deadline}" />
+        </div>
+        <button type="submit" class="btn btn-primary">Kaydet</button>
+      </form>
+    </div>
+  </div>
+</div>

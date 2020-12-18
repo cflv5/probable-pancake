@@ -1,0 +1,44 @@
+<div th:fragment="addform" class="container">
+    <div class="row">
+        <div class="col">
+            <h1>Kütüphane Ayarı Ekle</h1>
+        </div>
+    </div>
+    <hr>
+    <div class="row my-3">
+        <div class="col-sm-12">
+            <div th:if="${success}" class="col-sm-12 alert alert-success">
+                İşlem başarıyla gerçekleşti.
+            </div>
+            <div th:if="${hasError}" class="col-sm-12 alert alert-danger">
+                <p class="my-15">Üye kayıt formu hatalı!</p>
+                <ul class="list-group" th:if="${integrityError}">
+                    <li class="list-group-item" th:text="${errorMessage}"></li>
+                </ul>
+            </div>
+        </div>
+        <div class="col-sm-12">
+            <form action="/library-settings/add" method="post">
+                <div class="form-group">
+                    <label for="name">Ayar İsmi</label>
+                    <input class="form-control" id="name" type="text" name="name">
+                </div>
+                <div class="form-group">
+                    <label for="value">Ayar Değeri</label>
+                    <input class="form-control" type="text" id="value" name="value">
+                </div>
+                <div class="form-group">
+                    <label for="type">Ayar Değer Tipi</label>
+                    <select class="form-control" id="type" name="type">
+                        <option
+                            th:each="type : ${T(tr.edu.yildiz.yazilimkalite.librarymanagement.model.LibrarySettingType).values()}"
+                            th:value="${type}" th:text="${type.name}" th:selected="${item?.type == type}">
+                        </option>
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-primary">Kaydet</button>
+            </form>
+        </div>
+    </div>
+</div>
+</div>
