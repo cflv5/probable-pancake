@@ -1,6 +1,7 @@
 package tr.edu.yildiz.yazilimkalite.librarymanagement.dto;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 import tr.edu.yildiz.yazilimkalite.librarymanagement.model.LibrarySettingType;
 
@@ -13,7 +14,7 @@ public class LibrarySettingDto {
     @NotBlank
     private String value;
 
-    @NotBlank
+    @NotNull
     private LibrarySettingType type;
 
     public LibrarySettingDto() {
