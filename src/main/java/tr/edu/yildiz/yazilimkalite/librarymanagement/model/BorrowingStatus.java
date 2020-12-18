@@ -1,7 +1,19 @@
 package tr.edu.yildiz.yazilimkalite.librarymanagement.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public enum BorrowingStatus {
-    NOT_RETURNED("İade Edilmedi"), RETURNED("İade"), LATE("Geç İade"), LOST("Kayıp");
+    @JsonProperty("İade Edilmedi")
+    NOT_RETURNED("İade Edilmedi"), 
+    
+    @JsonProperty("İade") 
+    RETURNED("İade"), 
+    
+    @JsonProperty("Geç İade")
+    LATE("Geç İade"), 
+    
+    @JsonProperty("Kayıp")  
+    LOST("Kayıp");
 
     private String name;
 
