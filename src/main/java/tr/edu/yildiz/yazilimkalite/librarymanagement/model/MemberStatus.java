@@ -1,7 +1,16 @@
 package tr.edu.yildiz.yazilimkalite.librarymanagement.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public enum MemberStatus {
-    ACTIVE("Aktif"), PASSIVE("Pasif"), WAITING("Bekliyor");
+    @JsonProperty("Aktif")
+    ACTIVE("Aktif"), 
+    
+    @JsonProperty("Pasif")
+    PASSIVE("Pasif"), 
+    
+    @JsonProperty("Bekliyor")
+    WAITING("Bekliyor");
 
     private String name;
 
