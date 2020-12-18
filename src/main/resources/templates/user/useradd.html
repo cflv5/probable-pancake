@@ -12,7 +12,7 @@
         <div th:if="${hasError}" class="col-sm-12 alert alert-danger">
             <p class="my-15">Üye kayıt formu hatalı!</p>
             <ul class="list-group" th:if="${integrityError}">
-                <li class="list-group-item" th:text="${errortMessage}"></li>
+                <li class="list-group-item" th:text="${errorMessage}"></li>
             </ul>
         </div>
         <div class="col-sm-12">
