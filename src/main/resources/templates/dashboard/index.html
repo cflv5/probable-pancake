@@ -1,0 +1,54 @@
+<div th:fragment="dashboards" class="container">
+    <div class="row">
+        <div class="col">
+            <h1 class="m-2">Kütüphane Özeti</h1>
+        </div>
+    </div>
+    <hr>
+    <div class="row">
+        <div class="col-sm-6 text-center my-2">
+            <div class="card">
+                <div class="card-header">
+                    Kullanıcılar
+                </div>
+                <div class="card-body">
+                    <canvas class="chart spinner-border" id="users" data-url="/api/users/statistics/count">Tarayıcınız
+                        HTML canvas elemanını desteklemiyor.</canvas>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6 text-center my-2">
+            <div class="card">
+                <div class="card-header">
+                    Kitaplar
+                </div>
+                <div class="card-body">
+                    <canvas class="chart spinner-border" id="books" data-url="/api/books/statistics/count">Tarayıcınız
+                        HTML canvas elemanını desteklemiyor.</canvas>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6 text-center my-2">
+            <div class="card">
+                <div class="card-header">
+                    Üyeler
+                </div>
+                <div class="card-body">
+                    <canvas class="chart spinner-border" id="members" data-url="/api/members/statistics/count">Tarayıcınız
+                        HTML canvas elemanını desteklemiyor.</canvas>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6 text-center my-2">
+            <div class="card">
+                <div class="card-header">
+                    Ödünç Kayıtları
+                </div>
+                <div class="card-body">
+                    <canvas class="chart spinner-border" id="borrowings" data-url="/api/borrowings/statistics/count">Tarayıcınız
+                        HTML canvas elemanını desteklemiyor.</canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
