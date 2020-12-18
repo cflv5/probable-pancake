@@ -12,6 +12,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import tr.edu.yildiz.yazilimkalite.librarymanagement.dto.BorrowingRecordingDto;
+import tr.edu.yildiz.yazilimkalite.librarymanagement.dto.mapping.StatisticResultMapping;
 import tr.edu.yildiz.yazilimkalite.librarymanagement.exception.BookAlreadyBorrowedException;
 import tr.edu.yildiz.yazilimkalite.librarymanagement.exception.BorrowingAlreadyReturnedException;
 import tr.edu.yildiz.yazilimkalite.librarymanagement.exception.ForwardRecordException;
@@ -191,6 +192,10 @@ public class BorrowingService {
 		borrowingRepository.save(borrowing);
 
 		return borrowing;
+	}
+
+	public List<StatisticResultMapping> getBorrowingCountByStatus() {
+		return borrowingRepository.countGroupByStatus();
 	}
 
 }
