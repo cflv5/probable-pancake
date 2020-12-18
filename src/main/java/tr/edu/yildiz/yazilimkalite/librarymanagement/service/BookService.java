@@ -11,6 +11,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import tr.edu.yildiz.yazilimkalite.librarymanagement.dto.BookRegistrationDto;
+import tr.edu.yildiz.yazilimkalite.librarymanagement.dto.mapping.StatisticResultMapping;
 import tr.edu.yildiz.yazilimkalite.librarymanagement.exception.NotExistingEntityException;
 import tr.edu.yildiz.yazilimkalite.librarymanagement.model.Book;
 import tr.edu.yildiz.yazilimkalite.librarymanagement.model.Publisher;
@@ -118,5 +119,9 @@ public class BookService {
     public List<Book> getBookBySearchQuery(String query, Boolean borrowed, int size) {
         return bookRepository.findAllBySearchQueryAndBorrowed(query.toLowerCase(), borrowed, PageRequest.of(0, size)).getContent();
     }
+
+	public List<StatisticResultMapping> getBookCountByBorrowed() {
+		return bookRepository.countGroupByBorrowed();
+	}
 
 }

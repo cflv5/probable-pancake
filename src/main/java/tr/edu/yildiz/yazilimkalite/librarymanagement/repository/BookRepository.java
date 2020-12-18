@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.stereotype.Repository;
 
+import tr.edu.yildiz.yazilimkalite.librarymanagement.dto.mapping.StatisticResultMapping;
 import tr.edu.yildiz.yazilimkalite.librarymanagement.model.Book;
 
 @Repository
@@ -28,4 +29,10 @@ public interface BookRepository extends PagingAndSortingRepository<Book, Long> {
                     "(lower(b.name) LIKE CONCAT(:query, '%') OR lower(b.isbn) = :query)"
                 )
 	Page<Book> findAllBySearchQuery(String query, Pageable page);
+
+    @Query("SELECT " +
+            "new tr.edu.yildiz.yazilimkalite.librarymanagement.dto.mapping.StatisticResultMapping(b.borrowed, COUNT(b.borrowed)) " +
+            "FROM Book b " +
+            "GROUP BY b.borrowed")
+	List<StatisticResultMapping> countGroupByBorrowed();
 }
