@@ -21,7 +21,7 @@ import tr.edu.yildiz.yazilimkalite.librarymanagement.repository.MemberRepository
 
 @Service
 public class MemberService {
-    @Value("${library.member.id.lenght}")
+    @Value("${library.member.id.length}")
     private Integer libraryIdLenght;
 
     @Autowired
