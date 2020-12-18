@@ -1,16 +1,16 @@
 package tr.edu.yildiz.yazilimkalite.librarymanagement.repository;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;
-import org.springframework.stereotype.Repository;
 
+import tr.edu.yildiz.yazilimkalite.librarymanagement.dto.mapping.StatisticResultMapping;
 import tr.edu.yildiz.yazilimkalite.librarymanagement.model.User;
 
-@Repository
 public interface UserRepository extends PagingAndSortingRepository<User, Long> {
     Optional<User> findByEmail(String email);
 
@@ -21,4 +21,10 @@ public interface UserRepository extends PagingAndSortingRepository<User, Long> {
             "lower(u.email) LIKE :query%"
         )
     Page<User> findAllBySearchQuery(String query, Pageable page);
+
+    @Query("SELECT " +
+            "new tr.edu.yildiz.yazilimkalite.librarymanagement.dto.mapping.StatisticResultMapping(u.status, COUNT(u.status)) " +
+            "FROM User u " +
+            "GROUP BY u.status")
+    List<StatisticResultMapping> countGroupByStatus();
 }

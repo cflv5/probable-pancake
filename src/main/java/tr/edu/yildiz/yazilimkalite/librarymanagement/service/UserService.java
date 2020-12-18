@@ -11,6 +11,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import tr.edu.yildiz.yazilimkalite.librarymanagement.dto.UserRegistrationDto;
+import tr.edu.yildiz.yazilimkalite.librarymanagement.dto.mapping.StatisticResultMapping;
 import tr.edu.yildiz.yazilimkalite.librarymanagement.exception.EntityAlreadyExistsException;
 import tr.edu.yildiz.yazilimkalite.librarymanagement.exception.NotExistingEntityException;
 import tr.edu.yildiz.yazilimkalite.librarymanagement.exception.UserPasswordEmptyException;
@@ -91,4 +92,8 @@ public class UserService {
     public Page<User> searchUser(String query, Pageable page) {
         return userRepository.findAllBySearchQuery(query, page);
     }
+
+	public List<StatisticResultMapping> getUserCountByStatus() {
+		return userRepository.countGroupByStatus();
+	}
 }
