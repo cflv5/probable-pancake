@@ -8,7 +8,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.util.Assert;
 
 import tr.edu.yildiz.yazilimkalite.librarymanagement.dto.UserRegistrationDto;
 import tr.edu.yildiz.yazilimkalite.librarymanagement.dto.mapping.StatisticResultMapping;
@@ -24,6 +26,9 @@ import tr.edu.yildiz.yazilimkalite.librarymanagement.repository.UserRoleReposito
 public class UserService {
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private BCryptPasswordEncoder passwordEncoder;
 
     @Autowired
     private UserRoleRepository userRoleRepository;
@@ -50,11 +55,9 @@ public class UserService {
         }
 
         user = User.of(userToSave);
+        user.setPassword(passwordEncoder.encode(userToSave.getPassword()));
 
-        List<UserRole> roles = userRoleRepository.findAllByIdIn(userToSave.getRoles());
-        if (roles.size() != userToSave.getRoles().size()) {
-            throw new NotExistingEntityException("At least one of the entered roles does not exist.");
-        }
+        List<UserRole> roles = checkAndGetUserRoles(userToSave);
         user.setRoles(roles);
 
         userRepository.save(user);
@@ -84,6 +87,10 @@ public class UserService {
         }
 
         BeanUtils.copyProperties(editedUser, user, "id", "password", "roles");
+        
+        List<UserRole> roles = checkAndGetUserRoles(editedUser);
+        user.setRoles(roles);
+
         userRepository.save(user);
 
         return user;
@@ -95,5 +102,14 @@ public class UserService {
 
 	public List<StatisticResultMapping> getUserCountByStatus() {
 		return userRepository.countGroupByStatus();
-	}
+    }
+    
+    private List<UserRole> checkAndGetUserRoles(UserRegistrationDto user) {
+        Assert.notNull(user, "user must not be null");
+        List<UserRole> roles = userRoleRepository.findAllByIdIn(user.getRoles());
+        if (roles.size() != user.getRoles().size()) {
+            throw new NotExistingEntityException("At least one of the entered roles does not exist.");
+        }
+        return roles;
+    }
 }

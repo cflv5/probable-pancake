@@ -54,7 +54,10 @@
                                 <td th:text="${item.borrowed} ? 'Ödünç Alınmış' : 'Uygun'"></td>
                                 <td>
                                     <a th:href="@{/books/} + ${item.id}"><em class="fas fa-eye"></em></a>
-                                    <a th:href="@{/borrowings/create?bookId=} + ${item.id}"><em class="fas fa-book"></em></a>
+                                    <a sec:authorize="hasAuthority('EDITOR')" th:href="@{/books/edit/} + ${item.id}">
+                                        <em class="fas fa-cog"></em></a>
+                                    <a sec:authorize="hasAuthority('LIBRARIAN')" th:href="@{/borrowings/create?bookId=} + ${item.id}">
+                                        <em class="fas fa-book"></em></a>
                                 </td>
                             </tr>
                         </th:block>

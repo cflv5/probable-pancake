@@ -47,7 +47,7 @@ public class User {
     @Column(nullable = false)
     private UserStatus status;
 
-    @ManyToMany(fetch = FetchType.LAZY)
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
     private List<UserRole> roles;
 
@@ -58,12 +58,12 @@ public class User {
         super();
     }
 
-	public static User of(UserRegistrationDto userToSave) {
+    public static User of(UserRegistrationDto userToSave) {
         return new User()
                     .email(userToSave.getEmail()).name(userToSave.getName())
-                    .surname(userToSave.getSurname()).status(userToSave.getStatus())
-                    .password(userToSave.getPassword());
+                    .surname(userToSave.getSurname()).status(userToSave.getStatus());
     }
+
     public User id(Long id) {
         this.id = id;
         return this;
@@ -103,7 +103,7 @@ public class User {
         this.creationTime = creationTime;
         return this;
     }
-    
+
     public Long getId() {
         return id;
     }
@@ -160,19 +160,18 @@ public class User {
         this.roles = roles;
     }
 
-    
     public Timestamp getCreationTime() {
         return creationTime;
     }
-    
+
     public void setCreationTime(Timestamp creationTime) {
         this.creationTime = creationTime;
     }
-    
+
     @Override
     public String toString() {
         return "User [creationTime=" + creationTime + ", email=" + email + ", id=" + id + ", name=" + name
                 + ", password=" + password + ", roles=" + roles + ", status=" + status + ", surname=" + surname + "]";
     }
-    
+
 }

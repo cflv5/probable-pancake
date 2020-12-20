@@ -149,9 +149,9 @@ public class UserController {
             view = new RedirectView(email);
         } else {
             try {
-                userService.editUser(user, editedUser);
+                User savedUser = userService.editUser(user, editedUser);
                 redirectAttributes.addFlashAttribute(ViewConstants.SUCCESS, true);
-                view = new RedirectView(email);
+                view = new RedirectView(savedUser.getEmail().equals(email) ? email : savedUser.getEmail());
             } catch (EntityAlreadyExistsException e) {
                 redirectAttributes.addFlashAttribute(ViewConstants.Error.HAS_ERROR, true);
                 redirectAttributes.addFlashAttribute(ViewConstants.Error.INTEGRITY_ERROR, true);

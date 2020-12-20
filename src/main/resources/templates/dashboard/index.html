@@ -6,7 +6,7 @@
     </div>
     <hr>
     <div class="row">
-        <div class="col-sm-6 text-center my-2">
+        <div sec:authorize="hasAuthority('ADMIN')" class="col-sm-6 text-center my-2">
             <div class="card">
                 <div class="card-header">
                     Kullanıcılar
@@ -17,7 +17,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-sm-6 text-center my-2">
+        <div sec:authorize="hasAnyAuthority('LIBRARIAN', 'EDITOR')" class="col-sm-6 text-center my-2">
             <div class="card">
                 <div class="card-header">
                     Kitaplar
@@ -28,7 +28,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-sm-6 text-center my-2">
+        <div sec:authorize="hasAuthority('LIBRARIAN')" class="col-sm-6 text-center my-2">
             <div class="card">
                 <div class="card-header">
                     Üyeler
@@ -39,7 +39,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-sm-6 text-center my-2">
+        <div sec:authorize="hasAnyAuthority('LIBRARIAN')" class="col-sm-6 text-center my-2">
             <div class="card">
                 <div class="card-header">
                     Ödünç Kayıtları
