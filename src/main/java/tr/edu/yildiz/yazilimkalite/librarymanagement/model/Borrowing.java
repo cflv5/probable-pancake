@@ -11,8 +11,10 @@ import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.UniqueConstraint;
 
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.GenericGenerator;
@@ -36,6 +38,7 @@ public class Borrowing {
     private Date refundDate;
 
     @ManyToMany
+    @JoinTable(uniqueConstraints = @UniqueConstraint(columnNames = {"borrowing_id", "books_id"}))
     private List<Book> books;
 
     @ManyToOne

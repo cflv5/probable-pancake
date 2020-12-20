@@ -11,8 +11,10 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.UniqueConstraint;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
@@ -49,8 +51,9 @@ public class Book {
     
     @ElementCollection
     private List<String> bookTypes;
-    
+
     @ManyToMany
+    @JoinTable(uniqueConstraints = { @UniqueConstraint(columnNames = { "books_id", "writers_id" }) })
     @JsonManagedReference
     private List<Writer> writers;
 
