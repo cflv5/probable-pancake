@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
@@ -25,6 +26,9 @@ import tr.edu.yildiz.yazilimkalite.librarymanagement.repository.UserRoleReposito
 public class UserService {
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private BCryptPasswordEncoder passwordEncoder;
 
     @Autowired
     private UserRoleRepository userRoleRepository;
@@ -51,6 +55,7 @@ public class UserService {
         }
 
         user = User.of(userToSave);
+        user.setPassword(passwordEncoder.encode(userToSave.getPassword()));
 
         List<UserRole> roles = checkAndGetUserRoles(userToSave);
         user.setRoles(roles);
