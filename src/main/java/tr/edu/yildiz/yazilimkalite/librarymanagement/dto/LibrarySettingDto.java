@@ -6,6 +6,7 @@ import javax.validation.constraints.NotNull;
 import tr.edu.yildiz.yazilimkalite.librarymanagement.model.LibrarySettingType;
 
 public class LibrarySettingDto {
+    @NotNull
     private Long id;
 
     @NotBlank

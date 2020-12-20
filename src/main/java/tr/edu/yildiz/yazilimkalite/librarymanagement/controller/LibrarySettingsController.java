@@ -43,28 +43,15 @@ public class LibrarySettingsController {
         return view;
     }
 
-    @GetMapping("/add")
-    public ModelAndView getAddForm(Model model) {
-        ModelAndView view = new ModelAndView(ViewConstants.BOILERPLATE);
-        model.addAttribute(ViewConstants.FRAGMENT, "library-setting/add-form");
-
-        model.addAttribute("setting", new LibrarySettingDto());
-
-        return view;
-    }
-
-    @PostMapping("/add")
+    @PostMapping("/edit")
     public RedirectView addSetting(@ModelAttribute @Valid LibrarySettingDto settingDto, BindingResult result,
             RedirectAttributes redirectAttributes, HttpServletRequest request) {
-        RedirectView view = new RedirectView(request.getHeader("Referer"));
-
         if (result.hasErrors()) {
             redirectAttributes.addFlashAttribute(ViewConstants.Error.HAS_ERROR, true);
         } else {
             try {
                 librarySettingService.save(settingDto);
                 redirectAttributes.addFlashAttribute("success", true);
-                view = new RedirectView("/library-settings");
             } catch (NonUpdatableFieldException e) {
                 switch (e.getName()) {
                     case "name":
@@ -87,7 +74,7 @@ public class LibrarySettingsController {
             }
         }
 
-        return view;
+        return new RedirectView("/library-settings");
     }
 
 }

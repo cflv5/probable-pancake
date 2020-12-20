@@ -10,7 +10,7 @@
                 İşlem başarıyla gerçekleşti.
             </div>
             <div th:if="${hasError}" class="col-sm-12 alert alert-danger">
-                <p class="my-15">Üye kayıt formu hatalı!</p>
+                <p class="my-15">Ayar formu hatalı!</p>
                 <ul class="list-group" th:if="${integrityError}">
                     <li class="list-group-item" th:text="${errorMessage}"></li>
                 </ul>
@@ -30,22 +30,28 @@
                     </thead>
                     <tbody>
                         <th:block th:each="item : ${settings}">
-                            <form th:action="@{/library-settings/add}" method="post">
+                            <form th:action="@{/library-settings/edit}" method="post">
                                 <tr>
                                     <input type="hidden" name="id" th:value="${item.id}">
                                     <td>
                                         <input class="form-control" readonly type="text" th:value="${item.name}" name="name">
                                     </td>
                                     <td>
-                                        <input class="form-control" type="text" th:value="${item.value}" name="value">
+                                        <th:block 
+                                            th:if="${item?.type == T(tr.edu.yildiz.yazilimkalite.librarymanagement.model.LibrarySettingType).BOOLEAN}">
+                                            <select required class="form-control" name="value">
+                                                <option value="true" th:selected="${item?.value == 'true'}">Evet</option>
+                                                <option value="false" th:selected="${item?.value == 'false'}">Hayır</option>
+                                            </select>
+                                        </th:block>
+                                        <th:block 
+                                            th:unless="${item?.type == T(tr.edu.yildiz.yazilimkalite.librarymanagement.model.LibrarySettingType).BOOLEAN}">
+                                            <input required class="form-control" type="text" th:value="${item.value}" name="value">
+                                        </th:block>
                                     </td>
                                     <td>
-                                        <select class="form-control" name="type">
-                                            <option
-                                                th:each="type : ${T(tr.edu.yildiz.yazilimkalite.librarymanagement.model.LibrarySettingType).values()}"
-                                                th:value="${type}" th:text="${type.name}" th:selected="${item?.type == type}">
-                                            </option>
-                                        </select>
+                                        <input class="form-control" type="hidden" th:value="${item?.type}" readonly name="type">
+                                        <input class="form-control" type="text" th:value="${item?.type.name}" readonly>
                                     </td>
                                     <td>
                                         <button type="submit" class="btn btn-primary">Düzenle</button>

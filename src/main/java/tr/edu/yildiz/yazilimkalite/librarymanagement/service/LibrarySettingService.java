@@ -4,12 +4,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.util.Assert;
 
 import tr.edu.yildiz.yazilimkalite.librarymanagement.dto.LibrarySettingDto;
-import tr.edu.yildiz.yazilimkalite.librarymanagement.exception.EntityAlreadyExistsException;
 import tr.edu.yildiz.yazilimkalite.librarymanagement.exception.NonUpdatableFieldException;
 import tr.edu.yildiz.yazilimkalite.librarymanagement.exception.NotExistingEntityException;
 import tr.edu.yildiz.yazilimkalite.librarymanagement.exception.ValueNotCompatibleWithTypeException;
@@ -24,49 +24,33 @@ public class LibrarySettingService {
 
     public List<LibrarySetting> getAll() {
         List<LibrarySetting> settings = new ArrayList<>();
-        librarySettingRepository.findAll().forEach(settings::add);
+        librarySettingRepository.findAll(Sort.by(Sort.Direction.ASC, "id")).forEach(settings::add);
         return settings;
     }
 
     public LibrarySetting save(LibrarySettingDto settingDto) {
-        LibrarySetting setting = null;
+        Assert.notNull(settingDto.getId(), "id property of edited Library Setting cannot be null.");
 
-        if (settingDto.getId() != null) {
-            setting = getById(settingDto.getId());
+        LibrarySetting setting = getById(settingDto.getId());
 
-            if (setting == null) {
-                throw new NotExistingEntityException(
-                        "Library Setting with id " + settingDto.getId() + " does not exist.");
-            }
-
-            if (!settingDto.getName().equals(setting.getName())) {
-                throw new NonUpdatableFieldException("Name column of the LibrarySetting Entity cannot be changed.",
-                        "name");
-            }
-            if (!settingDto.getType().equals(setting.getType())) {
-                throw new NonUpdatableFieldException("Name column of the LibrarySetting Entity cannot be changed.",
-                        "type");
-            }
-
-            checkValueTypeAndValue(settingDto.getType(), settingDto.getValue());
-            setting.setValue(settingDto.getValue());
-            setting.setType(settingDto.getType());
-
-        } else {
-            setting = new LibrarySetting();
-
-            if(getByName(settingDto.getName()) != null) {
-                throw new EntityAlreadyExistsException("Setting with specified name alreay exists.");
-            }
-
-            checkValueTypeAndValue(settingDto.getType(), settingDto.getValue());
-            BeanUtils.copyProperties(settingDto, setting);
+        if (setting == null) {
+            throw new NotExistingEntityException("Library Setting with id " + settingDto.getId() + " does not exist.");
         }
+
+        if (!settingDto.getName().equals(setting.getName())) {
+            throw new NonUpdatableFieldException("Name column of the LibrarySetting Entity cannot be changed.", "name");
+        }
+        if (!settingDto.getType().equals(setting.getType())) {
+            throw new NonUpdatableFieldException("Type column of the LibrarySetting Entity cannot be changed.", "type");
+        }
+
+        checkValueTypeAndValue(settingDto.getType(), settingDto.getValue());
+        setting.setValue(settingDto.getValue());
 
         return librarySettingRepository.save(setting);
     }
 
-    private LibrarySetting getByName(String name) {
+    public LibrarySetting getByName(String name) {
         LibrarySetting setting = null;
 
         Optional<LibrarySetting> fetchedSetting = librarySettingRepository.findByName(name);
@@ -91,12 +75,14 @@ public class LibrarySettingService {
     }
 
     private void checkValueTypeAndValue(LibrarySettingType type, String value) {
-        if (type.equals(LibrarySettingType.NUMERIC)) {
-            try {
+        try {
+            if (type.equals(LibrarySettingType.NUMERIC)) {
                 Long.parseLong(value);
-            } catch (NumberFormatException e) {
-                throw new ValueNotCompatibleWithTypeException("Only numeric values are accepted for this setting.");
+            } else if (type.equals(LibrarySettingType.BOOLEAN)) {
+                Boolean.parseBoolean(value);
             }
+        } catch (NumberFormatException e) {
+            throw new ValueNotCompatibleWithTypeException("Value is not compatible for the type.");
         }
     }
 
