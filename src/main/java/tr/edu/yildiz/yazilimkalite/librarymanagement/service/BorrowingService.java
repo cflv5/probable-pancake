@@ -6,6 +6,7 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.Optional;
 
+import org.apache.commons.lang3.time.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import tr.edu.yildiz.yazilimkalite.librarymanagement.dto.BorrowingRecordingDto;
 import tr.edu.yildiz.yazilimkalite.librarymanagement.dto.mapping.StatisticResultMapping;
+import tr.edu.yildiz.yazilimkalite.librarymanagement.exception.AllowedSizeExceededException;
 import tr.edu.yildiz.yazilimkalite.librarymanagement.exception.BookAlreadyBorrowedException;
 import tr.edu.yildiz.yazilimkalite.librarymanagement.exception.BorrowingAlreadyReturnedException;
 import tr.edu.yildiz.yazilimkalite.librarymanagement.exception.ForwardRecordException;
@@ -30,6 +32,7 @@ import tr.edu.yildiz.yazilimkalite.librarymanagement.model.MemberStatus;
 import tr.edu.yildiz.yazilimkalite.librarymanagement.model.User;
 import tr.edu.yildiz.yazilimkalite.librarymanagement.repository.BookRepository;
 import tr.edu.yildiz.yazilimkalite.librarymanagement.repository.BorrowingRepository;
+import tr.edu.yildiz.yazilimkalite.librarymanagement.util.LibrarySettingNames;
 
 @Service
 public class BorrowingService {
@@ -41,6 +44,9 @@ public class BorrowingService {
 
 	@Autowired
 	private BookRepository bookRepository;
+
+	@Autowired
+	private LibrarySettingService librarySettingService;
 
 	public Borrowing saveBorrowing(BorrowingRecordingDto borrowingRecord) {
 		Borrowing borrowing = new Borrowing();
@@ -58,6 +64,12 @@ public class BorrowingService {
 		}
 		borrowing.setMember(member);
 
+		String allowedSize = librarySettingService.getByName(LibrarySettingNames.ALLOW_BORROWING_BOOKS_SIZE).getValue();
+
+		if (borrowingRecord.getBooks().size() > Integer.parseInt(allowedSize)) {
+			throw new AllowedSizeExceededException("Allowed size for books in a borrowing exceeded.", allowedSize);
+		}
+
 		List<Book> books = bookRepository.findAllByIdIn(borrowingRecord.getBooks());
 
 		if (books.size() != borrowingRecord.getBooks().size()) {
@@ -65,8 +77,9 @@ public class BorrowingService {
 		}
 
 		books.forEach(book -> {
-			if(book.isBorrowed() != null && book.isBorrowed()) {
-				throw new BookAlreadyBorrowedException("Id with " + book.getId() + " is already borrowed.", book.getName());
+			if (book.isBorrowed() != null && book.isBorrowed()) {
+				throw new BookAlreadyBorrowedException("Id with " + book.getId() + " is already borrowed.",
+						book.getName());
 			}
 			book.setBorrowed(true);
 		});
@@ -79,10 +92,7 @@ public class BorrowingService {
 		compareAndCheckStartDate(startDate);
 		borrowing.setStartDate(startDate);
 
-		if (!compareAndCheckDeadline(deadline)) {
-			throw new NotAcceptableDeadlineException("Specified deadline is not acceptable.");
-		}
-
+		compareAndCheckDeadline(deadline, startDate);
 		borrowing.setDeadline(deadline);
 
 		borrowing.setCreator(new User().id(1L));
@@ -115,36 +125,48 @@ public class BorrowingService {
 	}
 
 	public boolean isAvailableToExtend(Borrowing borrowing) {
-		return borrowing.getExtension() <= 3;
+		return borrowing.getExtension() < Integer
+				.parseInt(librarySettingService.getByName(LibrarySettingNames.MAX_EXTENSION).getValue());
 	}
 
 	private void compareAndCheckStartDate(Date startDate) {
 		LocalDate today = new Date(Calendar.getInstance().getTime().getTime()).toLocalDate();
 		LocalDate startDateLocal = startDate.toLocalDate();
 
-		if (startDateLocal.isBefore(today)) {
+		boolean retroactiveBorrow = Boolean
+				.parseBoolean(librarySettingService.getByName(LibrarySettingNames.RETROACTIVE_BORROW).getValue());
+		boolean forwardBorrow = Boolean
+				.parseBoolean(librarySettingService.getByName(LibrarySettingNames.FORWARD_BORROW).getValue());
+
+		if (!retroactiveBorrow && startDateLocal.isBefore(today)) {
 			throw new RetroactiveRecordException("Retroactive record is not allowed.");
-		} else if (startDateLocal.isAfter(today)) {
+		} else if (!forwardBorrow && startDateLocal.isAfter(today)) {
 			throw new ForwardRecordException("Forward record is not allowed.");
 		}
 	}
 
-	private boolean compareAndCheckDeadline(Date deadline) {
+	private void compareAndCheckDeadline(Date deadline, Date startDate) {
 		boolean isAccepted = false;
 
-		Calendar calendar = Calendar.getInstance();
+		int minBorrowDay = Integer
+				.parseInt(librarySettingService.getByName(LibrarySettingNames.MIN_BORROW_DAY).getValue());
+		int maxBorrowDay = Integer
+				.parseInt(librarySettingService.getByName(LibrarySettingNames.MAX_BORROW_DAY).getValue());
 
-		Date today = new Date(calendar.getTime().getTime());
-		if (deadline.toLocalDate().compareTo(today.toLocalDate()) > 0) {
+		if (DateUtils.truncatedCompareTo(deadline, startDate, Calendar.DATE) > 0) {
+			Date minBorrowDate = new Date(DateUtils.addDays(startDate, minBorrowDay).getTime());
+			Date maxBorrowDate = new Date(DateUtils.addDays(startDate, maxBorrowDay).getTime());
 
-			calendar.add(Calendar.DAY_OF_YEAR, 21);
-			Date acceptableDeadline = new Date(calendar.getTime().getTime());
-			if (deadline.toLocalDate().compareTo(acceptableDeadline.toLocalDate()) < 0) {
+			if ((DateUtils.truncatedCompareTo(minBorrowDate, deadline, Calendar.DATE) <= 0)
+					&& (DateUtils.truncatedCompareTo(maxBorrowDate, deadline, Calendar.DATE) >= 0)) {
 				isAccepted = true;
 			}
+
 		}
 
-		return isAccepted;
+		if (!isAccepted) {
+			throw new NotAcceptableDeadlineException("Specified deadline is not acceptable.");
+		}
 	}
 
 	public Borrowing refund(Borrowing borrowing) {
@@ -161,7 +183,7 @@ public class BorrowingService {
 		}
 
 		borrowing.getBooks().forEach(book -> book.setBorrowed(false));
-		
+
 		borrowingRepository.save(borrowing);
 		
 		return borrowing;
@@ -173,7 +195,10 @@ public class BorrowingService {
 			throw new BorrowingAlreadyReturnedException("Borrowing already returned.");
 		}
 
-		if (borrowing.getExtension() > 3) {
+		int maxExtension = Integer
+				.parseInt(librarySettingService.getByName(LibrarySettingNames.MAX_EXTENSION).getValue());
+
+		if (borrowing.getExtension() >= maxExtension) {
 			throw new NoMoreExtensionAllowedException("Member exceeded the extension limit.");
 		}
 
@@ -181,11 +206,11 @@ public class BorrowingService {
 			throw new RetroactiveRecordException("Cannot extend late records.");
 		}
 
-		Calendar calendar = Calendar.getInstance();
-		calendar.setTime(borrowing.getDeadline());
-		calendar.add(Calendar.DAY_OF_YEAR, 14);
+		int extensionDay = Integer
+				.parseInt(librarySettingService.getByName(LibrarySettingNames.EXTENSION_DAY).getValue());
 
-		borrowing.setDeadline(new Date(calendar.getTime().getTime()));
+		Date newDeadline = new Date(DateUtils.addDays(borrowing.getDeadline(), extensionDay).getTime());
+		borrowing.setDeadline(newDeadline);
 
 		borrowing.setExtension(borrowing.getExtension() + 1);
 
