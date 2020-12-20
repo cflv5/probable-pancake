@@ -44,7 +44,7 @@
                                 <td th:text="${item.surname}"></td>
                                 <td>
                                     <a th:href="@{/writers/} + ${item.id}"><em class="fas fa-eye"></em></a>
-                                    <a th:href="@{/writers/edit/} + ${item.id}"><em class="fas fa-cog"></em></a>
+                                    <a sec:authorize="hasAuthority('EDITOR')" th:href="@{/writers/edit/} + ${item.id}"><em class="fas fa-cog"></em></a>
                                 </td>
                             </tr>
                         </th:block>

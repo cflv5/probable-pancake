@@ -42,7 +42,8 @@
                                 <td th:text="${item.name}"></td>
                                 <td>
                                     <a th:href="@{/publishers/} + ${item.id}"><em class="fas fa-eye"></em></a>
-                                    <a th:href="@{/publishers/edit/} + ${item.id}"><em class="fas fa-cog"></em></a>
+                                    <a sec:authorize="hasAuthority('EDITOR')"
+                                        th:href="@{/publishers/edit/} + ${item.id}"><em class="fas fa-cog"></em></a>
                                 </td>
                             </tr>
                         </th:block>
