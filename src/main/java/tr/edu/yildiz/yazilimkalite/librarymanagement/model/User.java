@@ -58,12 +58,12 @@ public class User {
         super();
     }
 
-	public static User of(UserRegistrationDto userToSave) {
+    public static User of(UserRegistrationDto userToSave) {
         return new User()
                     .email(userToSave.getEmail()).name(userToSave.getName())
-                    .surname(userToSave.getSurname()).status(userToSave.getStatus())
-                    .password(userToSave.getPassword());
+                    .surname(userToSave.getSurname()).status(userToSave.getStatus());
     }
+
     public User id(Long id) {
         this.id = id;
         return this;
@@ -173,5 +173,5 @@ public class User {
         return "User [creationTime=" + creationTime + ", email=" + email + ", id=" + id + ", name=" + name
                 + ", password=" + password + ", roles=" + roles + ", status=" + status + ", surname=" + surname + "]";
     }
-    
+
 }
