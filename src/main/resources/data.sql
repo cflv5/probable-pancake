@@ -6,7 +6,7 @@ VALUES
 ON CONFLICT DO NOTHING;
 
 INSERT INTO users(name, surname, email, password, status)
-VALUES('root', 'root', 'root@root', '1234', 'ACTIVE') ON CONFLICT DO NOTHING;
+VALUES('root', 'root', 'root@root', '$2b$10$kfNyYHVarL1aouXvwJ5Q5eR6.mGsrOqvY7NUb6ga9Y0QjFGB3JJJ.', 'ACTIVE') ON CONFLICT DO NOTHING;
 
 INSERT INTO users_roles(user_id, role_id)
 VALUES
