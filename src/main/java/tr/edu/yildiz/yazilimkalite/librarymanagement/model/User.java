@@ -47,7 +47,7 @@ public class User {
     @Column(nullable = false)
     private UserStatus status;
 
-    @ManyToMany(fetch = FetchType.LAZY)
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
     private List<UserRole> roles;
 
@@ -103,7 +103,7 @@ public class User {
         this.creationTime = creationTime;
         return this;
     }
-    
+
     public Long getId() {
         return id;
     }
@@ -160,15 +160,14 @@ public class User {
         this.roles = roles;
     }
 
-    
     public Timestamp getCreationTime() {
         return creationTime;
     }
-    
+
     public void setCreationTime(Timestamp creationTime) {
         this.creationTime = creationTime;
     }
-    
+
     @Override
     public String toString() {
         return "User [creationTime=" + creationTime + ", email=" + email + ", id=" + id + ", name=" + name
