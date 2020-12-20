@@ -24,22 +24,16 @@
             <div class="list-group list-group-flush">
                 <a href="/" class="list-group-item list-group-item-action bg-light">Özet</a>
                 <div sec:authorize="hasAuthority('ADMIN')" class="btn-group">
+                    <a href="/library-settings" class="list-group-item list-group-item-action bg-light">Kütüphane
+                        Ayarları</a>
+                </div>
+                <div sec:authorize="hasAuthority('ADMIN')" class="btn-group">
                     <a href="/users" class="list-group-item list-group-item-action bg-light">Kullanıcılar</a>
                     <button type="button" class="btn btn-light dropdown-toggle dropdown-toggle-split"
                         data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     </button>
                     <div class="dropdown-menu">
                         <a href="/users/add" class="list-group-item list-group-item-action bg-light">Ekle</a>
-                    </div>
-                </div>
-                <div sec:authorize="hasAuthority('ADMIN')" class="btn-group">
-                    <a href="/library-settings" class="list-group-item list-group-item-action bg-light">Kütüphane
-                        Ayarları</a>
-                    <button type="button" class="btn btn-light dropdown-toggle dropdown-toggle-split"
-                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    </button>
-                    <div class="dropdown-menu">
-                        <a href="/library-settings/add" class="list-group-item list-group-item-action bg-light">Ekle</a>
                     </div>
                 </div>
                 <div sec:authorize="hasAuthority('LIBRARIAN')" class="btn-group">
