@@ -17,11 +17,11 @@ ON CONFLICT DO NOTHING;
 
 INSERT INTO library_setting(name, value, type)
 VALUES
-('allowedBorrowingBooksSize', 3, 'NUMERIC'),
-('retroactiveBorrow', false, 'BOOLEAN'),
-('forwardBorrow', false, 'BOOLEAN'),
-('minBorrowDay', 0, 'NUMERIC'),
-('maxBorrowDay', 14, 'NUMERIC'),
-('maxExtension', 3, 'NUMERIC'),
-('extensionDay', 7, 'NUMERIC')
+('allowedBorrowingBooksSize', '3', 'NUMERIC'),
+('retroactiveBorrow', 'false', 'BOOLEAN'),
+('forwardBorrow', 'false', 'BOOLEAN'),
+('minBorrowDay', '0', 'NUMERIC'),
+('maxBorrowDay', '14', 'NUMERIC'),
+('maxExtension', '3', 'NUMERIC'),
+('extensionDay', '7', 'NUMERIC')
 ON CONFLICT DO NOTHING;
