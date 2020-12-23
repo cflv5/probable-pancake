@@ -48,7 +48,7 @@ public class BorrowingService {
 	@Autowired
 	private LibrarySettingService librarySettingService;
 
-	public Borrowing saveBorrowing(BorrowingRecordingDto borrowingRecord) {
+	public Borrowing saveBorrowing(BorrowingRecordingDto borrowingRecord, User user) {
 		Borrowing borrowing = new Borrowing();
 
 		Member member = memberService.getMemberByMemberId(borrowingRecord.getMember());
@@ -95,7 +95,7 @@ public class BorrowingService {
 		compareAndCheckDeadline(deadline, startDate);
 		borrowing.setDeadline(deadline);
 
-		borrowing.setCreator(new User().id(1L));
+		borrowing.setCreator(user);
 		borrowing.setStatus(BorrowingStatus.NOT_RETURNED);
 		borrowing.setExtension(0);
 

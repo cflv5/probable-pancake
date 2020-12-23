@@ -9,6 +9,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -36,6 +37,7 @@ import tr.edu.yildiz.yazilimkalite.librarymanagement.model.Book;
 import tr.edu.yildiz.yazilimkalite.librarymanagement.model.Borrowing;
 import tr.edu.yildiz.yazilimkalite.librarymanagement.model.BorrowingStatus;
 import tr.edu.yildiz.yazilimkalite.librarymanagement.model.Member;
+import tr.edu.yildiz.yazilimkalite.librarymanagement.model.PancakeUserDetails;
 import tr.edu.yildiz.yazilimkalite.librarymanagement.service.BookService;
 import tr.edu.yildiz.yazilimkalite.librarymanagement.service.BorrowingService;
 import tr.edu.yildiz.yazilimkalite.librarymanagement.service.MemberService;
@@ -179,7 +181,7 @@ public class BorrowingController {
 
     @PostMapping("/create")
     public RedirectView createBorrowingRecord(@ModelAttribute @Valid BorrowingRecordingDto borrowingDto,
-            BindingResult result, RedirectAttributes model) {
+            BindingResult result, RedirectAttributes model, @AuthenticationPrincipal PancakeUserDetails user) {
         RedirectView view = null;
         final String BORROWING_CREATE_URI = "/borrowings/create";
         final String MEMBER_ID = "memberId";
@@ -189,7 +191,7 @@ public class BorrowingController {
             return new RedirectView(BORROWING_CREATE_URI);
         }
         try {
-            Borrowing borrowing = borrowingService.saveBorrowing(borrowingDto);
+            Borrowing borrowing = borrowingService.saveBorrowing(borrowingDto, user.getUser());
 
             model.addFlashAttribute(ViewConstants.SUCCESS, true);
             model.addFlashAttribute(ViewConstants.SUCCESS_MESSAGE, "Ödünç verme işlemi başarılı.");
