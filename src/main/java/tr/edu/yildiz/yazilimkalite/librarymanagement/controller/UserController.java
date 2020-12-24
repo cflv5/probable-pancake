@@ -1,5 +1,6 @@
 package tr.edu.yildiz.yazilimkalite.librarymanagement.controller;
 
+import java.util.Arrays;
 import java.util.List;
 
 import javax.validation.Valid;
@@ -24,8 +25,10 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.view.RedirectView;
 
+import tr.edu.yildiz.yazilimkalite.librarymanagement.dto.PasswordChangeDto;
 import tr.edu.yildiz.yazilimkalite.librarymanagement.dto.UserRegistrationDto;
 import tr.edu.yildiz.yazilimkalite.librarymanagement.exception.EntityAlreadyExistsException;
+import tr.edu.yildiz.yazilimkalite.librarymanagement.exception.FieldNotMatchingException;
 import tr.edu.yildiz.yazilimkalite.librarymanagement.exception.NotExistingEntityException;
 import tr.edu.yildiz.yazilimkalite.librarymanagement.exception.UserPasswordEmptyException;
 import tr.edu.yildiz.yazilimkalite.librarymanagement.model.User;
@@ -126,6 +129,7 @@ public class UserController {
             List<UserRole> roles = userRoleService.getAllUserRoles();
             model.addAttribute("user", user);
             model.addAttribute("roles", roles);
+            model.addAttribute("js", Arrays.asList("/js/edit-user.js"));
             model.addAttribute(ViewConstants.FRAGMENT, "user/useradd :: user-add-form");
         }
         return view;
@@ -168,4 +172,32 @@ public class UserController {
         return view;
     }
 
+    @PostMapping("/change-password/{email}")
+    public RedirectView changePassword(@Valid PasswordChangeDto passwordChangeRequest, BindingResult result,
+            @PathVariable String email, Model model, RedirectAttributes redirectAttributes) {
+        RedirectView view = new RedirectView("/users/edit/" + email);
+
+        if (result.hasErrors()) {
+            redirectAttributes.addFlashAttribute(ViewConstants.Error.HAS_ERROR, true);
+            return view;
+        }
+
+        User user = userService.getUserByEmail(email);
+
+        if(user == null) {
+            redirectAttributes.addFlashAttribute(ViewConstants.Error.HAS_ERROR, true);
+            redirectAttributes.addFlashAttribute("notFound", true);
+        } else {
+            try {
+                userService.changePassword(user, passwordChangeRequest);
+                redirectAttributes.addFlashAttribute("success", true);
+            } catch (FieldNotMatchingException e) {
+                ModelAttributeHelper.addFlashAttrHasErrorIntegrityErrorAndErrorMessage(redirectAttributes,
+                        "Eski şifre kullanıcının şifresiyle eşleşmiyor.");
+            } 
+
+        }
+
+        return view;
+    }
 }
