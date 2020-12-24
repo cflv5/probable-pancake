@@ -57,8 +57,45 @@
                         </div>
                     </th:block>
                 </div>
-                <button type="submit" class="btn btn-primary">Kaydet</button>
+                <div class="form-group">
+                    <input type="submit" class="btn btn-primary" value="Kaydet">
+                    <button type="button" class="btn btn-warning" th:if="${updateForm}" data-toggle="modal"
+                        data-target="#password-change">Şifre Değiş</button>
+                </div>
             </form>
+            <div th:if="${updateForm}" class="modal" tabindex="-1" id="password-change">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Şifre Değiş</h5>
+                        </div>
+                        <div class="modal-body">
+                            <form th:action="@{/users/change-password/} + ${user.email}" method="POST"
+                                id="password-change-form">
+                                <div class="form-group">
+                                    <label for="old-password">Eski Şifre</label>
+                                    <input class="form-control" type="password" name="oldPassword" id="old-password"
+                                        required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="new-password">Yeni Şifre</label>
+                                    <input class="form-control" type="password" name="newPassword" id="new-password"
+                                        required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="new-password-confirm">Yeni Şifre Tekrar</label>
+                                    <input class="form-control" type="password" id="new-password-confirm" required>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Kapat</button>
+                            <input type="submit" form="password-change-form" id="password-change-form-submit"
+                                class="btn btn-primary" value="Şifre Değiş">
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 

@@ -12,9 +12,11 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
+import tr.edu.yildiz.yazilimkalite.librarymanagement.dto.PasswordChangeDto;
 import tr.edu.yildiz.yazilimkalite.librarymanagement.dto.UserRegistrationDto;
 import tr.edu.yildiz.yazilimkalite.librarymanagement.dto.mapping.StatisticResultMapping;
 import tr.edu.yildiz.yazilimkalite.librarymanagement.exception.EntityAlreadyExistsException;
+import tr.edu.yildiz.yazilimkalite.librarymanagement.exception.FieldNotMatchingException;
 import tr.edu.yildiz.yazilimkalite.librarymanagement.exception.NotExistingEntityException;
 import tr.edu.yildiz.yazilimkalite.librarymanagement.exception.UserPasswordEmptyException;
 import tr.edu.yildiz.yazilimkalite.librarymanagement.model.User;
@@ -111,5 +113,17 @@ public class UserService {
             throw new NotExistingEntityException("At least one of the entered roles does not exist.");
         }
         return roles;
+    }
+
+    public User changePassword(User user, PasswordChangeDto passwordChangeRequest) {
+        Assert.notNull(user, "User must be presented.");
+
+        if (!passwordEncoder.matches(passwordChangeRequest.getOldPassword(), user.getPassword())) {
+            throw new FieldNotMatchingException("Provided old password not equals to user's password.");
+        }
+
+        user.setPassword(passwordEncoder.encode(passwordChangeRequest.getNewPassword()));
+
+        return userRepository.save(user);
     }
 }
