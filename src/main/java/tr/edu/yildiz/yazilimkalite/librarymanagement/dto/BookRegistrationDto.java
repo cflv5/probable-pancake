@@ -4,6 +4,8 @@ import java.sql.Date;
 import java.util.List;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 
 import tr.edu.yildiz.yazilimkalite.librarymanagement.model.CoverFormat;
 
@@ -26,10 +28,12 @@ public class BookRegistrationDto {
 
     private String language;
 
+    @NotNull
     private Long publisher;
 
     private List<String> bookTypes;
 
+    @NotEmpty
     private List<Long> writers;
 
     public BookRegistrationDto() {
