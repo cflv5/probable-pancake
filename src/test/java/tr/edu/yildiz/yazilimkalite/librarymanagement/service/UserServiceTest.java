@@ -51,18 +51,18 @@ public class UserServiceTest {
         User user = userService.saveUser(userDto);
 
         assertNotNull(user);
-        assertArrayEquals(new Object[]{
-            user.getEmail(),
-            user.getName(),
-            user.getSurname(),
-            user.getStatus(),
-            user.getRoles().stream().map(role -> role.getId()).collect(Collectors.toList())
-        }, new Object[] {
+        assertArrayEquals(new Object[] {
             email,
             name,
             surname,
             status,
             roles
+        }, new Object[]{
+            user.getEmail(),
+            user.getName(),
+            user.getSurname(),
+            user.getStatus(),
+            user.getRoles().stream().map(role -> role.getId()).collect(Collectors.toList())
         });
         assertTrue(passwordEncoder.matches(password, user.getPassword()));
     }
